@@ -8,8 +8,6 @@ import CloseIcon from "/close-icon.svg";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-
 const Link = ({ page, selectedPage, setSelectedPage }) => {
   const lowerCasePage = page.toLowerCase();
   return (
