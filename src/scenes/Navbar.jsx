@@ -7,7 +7,6 @@ import ATSResume from "/ats-compliant-resume.pdf";
 import CloseIcon from "/close-icon.svg";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Document, Page, pdfjs } from "react-pdf";
 
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 
@@ -35,7 +34,6 @@ const Navbar = ({
 }) => {
   const [isMenuToggled, setIsMenuToggled] = useState(false);
   const buttonRef = useRef(null);
-  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
   const isAboveSmallScreens = useMediaQuery("(min-width: 768px)");
   const navbarBackground = isTopOfPage ? "" : "bg-teal-500";
   const linksList = [
