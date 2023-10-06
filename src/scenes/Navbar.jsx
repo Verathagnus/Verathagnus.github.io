@@ -8,15 +8,14 @@ import CloseIcon from "/close-icon.svg";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-const Link = ({ page, selectedPage, setSelectedPage }) => {
-  const lowerCasePage = page.toLowerCase();
+const Link = ({ page, selectedPage, setSelectedPage, href }) => {
   return (
     <AnchorLink
       className={`${
-        selectedPage === lowerCasePage ? "text-yellow" : ""
+        selectedPage === href ? "text-yellow" : ""
       } hover:text-yellow transition duration-500`}
-      href={`#${lowerCasePage}`}
-      onClick={() => setSelectedPage(lowerCasePage)}
+      href={`#${href}`}
+      onClick={() => setSelectedPage(href)}
     >
       {page}
     </AnchorLink>
@@ -35,22 +34,23 @@ const Navbar = ({
   const isAboveSmallScreens = useMediaQuery("(min-width: 768px)");
   const navbarBackground = isTopOfPage ? "" : "bg-teal-500";
   const linksList = [
-    { id: 1, page: "Home" },
-    { id: 2, page: "Skills" },
-    { id: 3, page: "Projects" },
-    // { id: 4, page: "Testimonials" },
-    { id: 5, page: "Contact" },
+    { id: 1, page: "Home", href: "home" },
+    { id: 2, page: "Skills", href: "skills" },
+    { id: 4, page: "Tech Stack", href: "tech-stack" },
+    { id: 3, page: "Projects", href: "projects" },
+    { id: 5, page: "Contact", href: "contact" },
   ];
 
   const handleDownloadClick = () => {
     // Implement the download functionality here
-    console.log("Test")
-    const element = document.createElement('a')
+    console.log("Test");
+    const element = document.createElement("a");
     element.href = viewResume === 1 ? PlainResume : ATSResume;
-    element.download = "Bishwaraj Paul Resume" + (viewResume === 1 ? "" : " ATS Compliant");
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
+    element.download =
+      "Bishwaraj Paul Resume" + (viewResume === 1 ? "" : " ATS Compliant");
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
   const [viewResume, setViewResume] = useState(1);
   return (
@@ -125,7 +125,12 @@ const Navbar = ({
                         ATS Compliant
                       </button>
                     </div>
-                    <button className={`px-4 py-2 text-sm font-medium text-white  border border-gray-200 rounded-lg hover:bg-violet-800 hover:text-white focus:z-10 focus:ring-2 focus:ring-blue bg-red`} onClick={handleDownloadClick}>Download PDF</button>
+                    <button
+                      className={`px-4 py-2 text-sm font-medium text-white  border border-gray-200 rounded-lg hover:bg-violet-800 hover:text-white focus:z-10 focus:ring-2 focus:ring-blue bg-red`}
+                      onClick={handleDownloadClick}
+                    >
+                      Download PDF
+                    </button>
                   </div>
                   <div className="w-full h-full p-5 mb-5">
                     {/* <Document file={viewResume === 1 ? PlainResume : ATSResume}>
@@ -156,6 +161,7 @@ const Navbar = ({
                 {linksList.map((link) => (
                   <Link
                     id={link.id}
+                    href={link.href}
                     page={link.page}
                     selectedPage={selectedPage}
                     setSelectedPage={setSelectedPage}
@@ -195,6 +201,7 @@ const Navbar = ({
                     <Link
                       id={link.id}
                       page={link.page}
+                      href={link.href}
                       selectedPage={selectedPage}
                       setSelectedPage={setSelectedPage}
                     />

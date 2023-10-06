@@ -23,7 +23,7 @@ const Skills = () => {
             MY <span className="text-teal-500">SKILLS</span>
           </p>
           <LineGradient width="w-1/3"/>
-          <p className="mt-10 mb-7">Text Desscription</p>
+          {/* <p className="mt-10 mb-7">Text Desscription</p> */}
         </motion.div>
 
         <div className="mt-16 md:mt-0">
@@ -60,7 +60,7 @@ const Skills = () => {
             </div>
             <div className="w-1/2 md:w-3/4 h-32 bg-blue absolute right-0 top-0 z-[-1]" />
           </div>
-          <p className="mt-5">Experience</p>
+          <p className="mt-5">Experienced in both Professional and Freelance Development.</p>
         </motion.div>
 
         {/* Innovative */}
@@ -84,7 +84,7 @@ const Skills = () => {
             </div>
             <div className="w-1/2 md:w-3/4 h-32 bg-teal-500 absolute right-0 top-0 z-[-1]" />
           </div>
-          <p className="mt-5">Innovative</p>
+          <p className="mt-5">Using various technologies to maintain budget and exceed requirements.</p>
         </motion.div>
 
         {/* Imaginative */}
@@ -103,12 +103,12 @@ const Skills = () => {
             <div className="z-10">
               <p className="font-playfair font-semibold text-5xl">03</p>
               <p className="font-playfair font-semibold text-3xl mt-3">
-                Imaginative
+                Variety
               </p>
             </div>
             <div className="w-1/2 md:w-3/4 h-32 bg-red absolute right-0 top-0 z-[-1]" />
           </div>
-          <p className="mt-5">Imaginative</p>
+          <p className="mt-5">Invoved in a variety of tech stacks aside from MERN such as Django, Wordpress and Rust.</p>
         </motion.div>
       </div>
     </section>

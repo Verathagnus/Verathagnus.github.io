@@ -8,6 +8,7 @@ import Skills from "./scenes/Skills";
 import Projects from "./scenes/Projects";
 import Contact from "./scenes/Contact";
 import Footer from "./scenes/Footer";
+import TechStack from "./scenes/TechStack";
 import LineGradient from "./components/LineGradient";
 import {motion} from "framer-motion";
 
@@ -58,6 +59,11 @@ function App() {
           <LineGradient />
           <div className="w-5/6 mx-auto md:h-full">
             <Skills />
+          </div>
+
+          <LineGradient />
+          <div className="w-5/6 mx-auto md:h-full">
+            <TechStack />
           </div>
 
           <LineGradient />

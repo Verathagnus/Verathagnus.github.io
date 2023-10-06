@@ -28,8 +28,9 @@ const Project = ({ title, imageUrl }) => {
 
   return (
     <motion.div variants={projectVariant} className="relative">
-      <div className={overlayStyles}></div>
-      <img src={`/${projectImageUrl}`} alt={projectTitle} />
+      <div className={overlayStyles}>
+      </div>
+      <img src={`/${projectImageUrl}`} alt={projectTitle} className="max-w-[400px] max-h-[400px]"/>
     </motion.div>
   );
 };
@@ -58,7 +59,7 @@ const Projects = () => {
           </div>
         </div>
 
-        <p className="mt-10 mb-10">Text Desscription</p>
+        <p className="mt-10 mb-10">A few of my full stack projects</p>
       </motion.div>
 
       {/* Projects */}

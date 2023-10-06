@@ -5,8 +5,8 @@ const DotGroup = ({ selectedPage, setSelectedPage }) => {
   const linksList = [
     { id: 1, page: "Home", href: "home" },
     { id: 2, page: "Skills", href: "skills" },
+    { id: 4, page: "Tech Stack", href: "tech-stack" },
     { id: 3, page: "Projects", href: "projects" },
-    // { id: 4, page: "Testimonials", href: "testimonials" },
     { id: 5, page: "Contact", href: "contact" },
   ];
 
