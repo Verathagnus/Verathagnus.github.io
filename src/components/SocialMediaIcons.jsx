@@ -6,7 +6,7 @@ const SocialMediaIcons = () => {
     const iconsList = [
         {
             id: 1,
-            url: "https://www.linkedin.com/BishwarajPaul",
+            url: "https://www.linkedin.com/in/BishwarajPaul",
             alt: "linkedin-link",
             imgSrc: LinkedInLogo
         },
