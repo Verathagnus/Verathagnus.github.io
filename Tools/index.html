@@ -6,19 +6,21 @@
     <title>Verathagnus | PDF Utilities</title>
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --bg: #f8f9fa;
-            --card: #ffffff;
+            --bg-deep-blue: #010d3e; 
+            --text-white: #ffffff;
+            --accent-teal: #2dd4bf; /* Teal-500 */
+            --accent-yellow: #fdcc49; /* Yellow */
         }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--primary);
+            background-color: var(--bg-deep-blue);
+            color: var(--text-white);
             line-height: 1.6;
             margin: 0;
             padding: 40px 20px;
+            background: radial-gradient(circle at top right, #0a192f, var(--bg-deep-blue));
+            min-height: 100vh;
         }
 
         .container {
