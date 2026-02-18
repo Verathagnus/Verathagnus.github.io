@@ -15,13 +15,13 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4 # Updated to v4
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v4 # Updated to v4
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'yarn' # Built-in caching for faster installs
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -29,13 +29,13 @@ jobs:
       - name: Build project
         run: yarn build
 
-      # Ensure static tools are in the build output
-      # If your 'tools' folder is in 'public/', Vite/CRA handles this. 
-      # If not, uncomment the line below:
-      # - run: cp -r tools dist/
+      - name: Copy Tools directory to build output
+        # This explicitly copies your Tools folder into the final dist directory.
+        # NOTE: Linux is case-sensitive. If your folder is named lowercase 'tools', change 'Tools' to 'tools' below.
+        run: cp -r Tools dist/
 
       - name: Upload production-ready build files
-        uses: actions/upload-artifact@v4 # Updated to v4
+        uses: actions/upload-artifact@v4
         with:
           name: production-files
           path: ./dist
@@ -48,15 +48,14 @@ jobs:
 
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v4 # Updated to v4
+        uses: actions/download-artifact@v4
         with:
           name: production-files
           path: ./dist
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4 # Updated to v4
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          # Prevents GitHub from deleting your 'tools' folder if it exists in the branch
           keep_files: false
