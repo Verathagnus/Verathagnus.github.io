@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Generator – Tools</title>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0d1a;
+            --bg-card: #252033;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-purple: #a78bfa;
+            --accent-blue: #60a5fa;
+            --accent-green: #34d399;
+            --accent-teal: #2dd4bf;
+            --border: rgba(167, 139, 250, 0.2);
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Open Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem 1.25rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-teal);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .back-link:hover { color: var(--accent-green); }
+
+        header { text-align: center; margin-bottom: 1.5rem; flex-shrink: 0; }
+        h1 { font-size: 1.75rem; margin: 0; color: var(--text); }
+        header p { margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .layout-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .layout-box {
+            background: #fff;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .layout-box.single {
+            width: 28px;
+            height: 28px;
+        }
+        .layout-box.combined {
+            width: 56px;
+            height: 28px;
+            gap: 8px;
+        }
+        .layout-visual .arrow {
+            color: var(--accent-teal);
+            font-size: 1.2rem;
+            margin: 0 0.25rem;
+        }
+
+        .container {
+            display: flex;
+            gap: 1.5rem;
+            flex: 1;
+            min-height: 0;
+        }
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+        }
+
+        .sidebar {
+            flex: 0 0 280px;
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: fit-content;
+        }
+        .control-group { margin-bottom: 0; }
+        label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
+
+        .file-drop-area {
+            border: 2px dashed var(--accent-teal);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            background: rgba(45, 212, 191, 0.05);
+            color: var(--accent-teal);
+        }
+        .file-drop-area:hover { background: rgba(45, 212, 191, 0.1); }
+        .file-drop-area.dragover { background: rgba(45, 212, 191, 0.15); border-color: var(--accent-green); }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 18px;
+            background: transparent;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-teal);
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type="range"]::-moz-range-track {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--accent-teal);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .slider-with-ticks {
+            margin-bottom: 0.5rem;
+        }
+        .slider-track-wrapper {
+            padding: 0 9px;
+        }
+        .slider-with-ticks input[type="range"] {
+            width: 100%;
+            display: block;
+        }
+        .rotation-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.4rem;
+        }
+        .rotation-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            color: var(--bg);
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: transform 0.15s ease-out;
+        }
+        .rotation-value {
+            color: var(--accent-teal);
+            font-weight: 600;
+            min-width: 40px;
+        }
+        .tick-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            padding: 0 9px;
+            margin-top: 8px;
+        }
+        .tick-labels span {
+            background: var(--accent-green);
+            color: #fff;
+            padding: 3px 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-weight: 600;
+            text-align: center;
+            min-width: 30px;
+        }
+        .tick-labels span:hover {
+            background: #22a06b;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+        .checkbox-group input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-teal); }
+        .checkbox-group label { margin: 0; font-weight: normal; cursor: pointer; font-size: 0.9rem; }
+
+        button {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        button:hover { background: var(--accent-teal); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        #downloadBtn { background: var(--accent-blue); display: none; margin-top: 0.5rem; }
+        #downloadBtn:hover { background: var(--accent-purple); }
+
+        .preview-pane {
+            flex: 1;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            min-height: 400px;
+        }
+        .preview-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        #pdfPreview {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #525659;
+            min-height: 360px;
+        }
+        .empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--text-muted);
+        }
+        #status { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center; min-height: 1.2em; }
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent-teal);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.5rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Tools</a>
+
+    <header>
+        <h1>🖨️ Layout Generator</h1>
+        <div class="layout-visual">
+            <div class="layout-box single"><span>T</span></div>
+            <div class="layout-box single"><span>T</span></div>
+            <span class="arrow">→</span>
+            <div class="layout-box combined"><span>T</span><span>T</span></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="control-group">
+                <label>1. Source PDF</label>
+                <div class="file-drop-area" id="dropZone">
+                    <span id="fileNameDisplay">Click or drop PDF here</span>
+                </div>
+                <input type="file" id="fileInput" accept="application/pdf" style="display: none;">
+            </div>
+            <div class="control-group">
+                <label>2. Output filename</label>
+                <input type="text" id="pdfNameInput" value="handout_layout.pdf" placeholder="e.g. print_ready.pdf">
+            </div>
+            <div class="control-group">
+                <label>3. Layout</label>
+                <select id="layoutSelect">
+                    <option value="4">4 pages (2×2)</option>
+                    <option value="2">2 pages (top & bottom)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>4. Options</label>
+                <select id="marginSelect" style="margin-bottom: 0.5rem;">
+                    <option value="0">No margin</option>
+                    <option value="2">2px</option>
+                    <option value="5">5px</option>
+                    <option value="20" selected>20px</option>
+                    <option value="50">50px</option>
+                </select>
+                <div class="rotation-label">
+                    <span>Input rotation</span>
+                    <span class="rotation-indicator" id="inputRotationIndicator">T</span>
+                    <span class="rotation-value" id="inputRotationValue">0°</span>
+                </div>
+                <div class="slider-with-ticks">
+                    <div class="slider-track-wrapper">
+                        <input type="range" id="inputRotation" min="0" max="360" step="90" value="0">
+                    </div>
+                    <div class="tick-labels" data-target="inputRotation">
+                        <span data-value="0">0°</span><span data-value="90">90°</span><span data-value="180">180°</span><span data-value="270">270°</span><span data-value="360">360°</span>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="borderCheck" checked>
+                    <label for="borderCheck">Draw borders</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>5. Page Numbers</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="pageNumCheck">
+                    <label for="pageNumCheck">Add page numbers</label>
+                </div>
+                <div id="pageNumOptions" style="display: none;">
+                    <label style="font-size: 0.8rem; margin-top: 0.5rem;">Position</label>
+                    <select id="pageNumPosition" style="margin-bottom: 0.5rem;">
+                        <option value="bottom">Bottom</option>
+                        <option value="top">Top</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                    </select>
+                    <div class="rotation-label">
+                        <span>Text rotation</span>
+                        <span class="rotation-indicator" id="pageNumRotationIndicator">T</span>
+                        <span class="rotation-value" id="rotationValue">0°</span>
+                    </div>
+                    <div class="slider-with-ticks">
+                        <div class="slider-track-wrapper">
+                            <input type="range" id="pageNumRotation" min="0" max="360" step="1" value="0" list="rotation-ticks">
+                        </div>
+                        <div class="tick-labels" data-target="pageNumRotation">
+                            <span data-value="0">0°</span><span data-value="90">90°</span><span data-value="180">180°</span><span data-value="270">270°</span><span data-value="360">360°</span>
+                        </div>
+                    </div>
+                    <label style="font-size: 0.8rem; margin-top: 0.5rem;">Font size</label>
+                    <select id="pageNumFontSize">
+                        <option value="8">8pt</option>
+                        <option value="10" selected>10pt</option>
+                        <option value="12">12pt</option>
+                        <option value="14">14pt</option>
+                    </select>
+                </div>
+            </div>
+            <datalist id="rotation-ticks">
+                <option value="0"></option>
+                <option value="90"></option>
+                <option value="180"></option>
+                <option value="270"></option>
+                <option value="360"></option>
+            </datalist>
+            <div>
+                <div class="spinner" id="loadingSpinner"></div>
+                <p id="status">Waiting for file...</p>
+                <button id="processBtn" onclick="processPdf()" disabled>Generate preview</button>
+                <button id="downloadBtn" onclick="downloadPdf()">Download result</button>
+            </div>
+        </div>
+
+        <div class="preview-pane">
+            <div class="preview-header">Output preview</div>
+            <iframe id="pdfPreview" title="PDF preview"></iframe>
+            <div class="empty-state" id="emptyState">Preview appears after processing</div>
+        </div>
+    </div>
+
+    <script>
+        const { PDFDocument, PageSizes, rgb, degrees, StandardFonts } = PDFLib;
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const pdfNameInput = document.getElementById('pdfNameInput');
+        const processBtn = document.getElementById('processBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const pdfPreview = document.getElementById('pdfPreview');
+        const emptyState = document.getElementById('emptyState');
+        const status = document.getElementById('status');
+        const spinner = document.getElementById('loadingSpinner');
+        const marginSelect = document.getElementById('marginSelect');
+        const borderCheck = document.getElementById('borderCheck');
+        const inputRotation = document.getElementById('inputRotation');
+        const inputRotationValue = document.getElementById('inputRotationValue');
+        const layoutSelect = document.getElementById('layoutSelect');
+        const pageNumCheck = document.getElementById('pageNumCheck');
+        const pageNumOptions = document.getElementById('pageNumOptions');
+        const pageNumPosition = document.getElementById('pageNumPosition');
+        const pageNumRotation = document.getElementById('pageNumRotation');
+        const rotationValue = document.getElementById('rotationValue');
+        const pageNumFontSize = document.getElementById('pageNumFontSize');
+
+        let currentFile = null;
+        let generatedPdfBytes = null;
+
+        // Toggle page number options visibility
+        pageNumCheck.addEventListener('change', () => {
+            pageNumOptions.style.display = pageNumCheck.checked ? 'block' : 'none';
+        });
+
+        const inputRotationIndicator = document.getElementById('inputRotationIndicator');
+        const pageNumRotationIndicator = document.getElementById('pageNumRotationIndicator');
+
+        // Update input rotation value and indicator (positive CSS rotation = clockwise)
+        function updateInputRotation(value) {
+            inputRotationValue.textContent = value + '°';
+            inputRotationIndicator.style.transform = `rotate(${value}deg)`;
+        }
+        inputRotation.addEventListener('input', () => {
+            updateInputRotation(inputRotation.value);
+        });
+
+        // Update page number rotation value and indicator
+        function updatePageNumRotation(value) {
+            rotationValue.textContent = value + '°';
+            pageNumRotationIndicator.style.transform = `rotate(${value}deg)`;
+        }
+        pageNumRotation.addEventListener('input', () => {
+            updatePageNumRotation(pageNumRotation.value);
+        });
+
+        // Handle tick button clicks
+        document.querySelectorAll('.tick-labels').forEach(tickContainer => {
+            tickContainer.addEventListener('click', (e) => {
+                if (e.target.dataset.value !== undefined) {
+                    const targetId = tickContainer.dataset.target;
+                    const slider = document.getElementById(targetId);
+                    const value = e.target.dataset.value;
+                    slider.value = value;
+                    if (targetId === 'inputRotation') {
+                        updateInputRotation(value);
+                    } else {
+                        updatePageNumRotation(value);
+                    }
+                }
+            });
+        });
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (file.type !== 'application/pdf') {
+                alert('Please choose a PDF file.');
+                return;
+            }
+            currentFile = file;
+            fileNameDisplay.textContent = "📄 " + file.name;
+            processBtn.disabled = false;
+            status.textContent = "Ready to convert.";
+            downloadBtn.style.display = 'none';
+        }
+
+        async function processPdf() {
+            if (!currentFile) return;
+            processBtn.disabled = true;
+            spinner.style.display = 'block';
+            status.textContent = "Processing...";
+            try {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const srcDoc = await PDFDocument.load(arrayBuffer);
+                const newDoc = await PDFDocument.create();
+                const pageCount = srcDoc.getPageCount();
+                const pages = srcDoc.getPages();
+                const canvasWidth = PageSizes.A4[0];
+                const canvasHeight = PageSizes.A4[1];
+                const padding = parseInt(marginSelect.value);
+                const drawBorders = borderCheck.checked;
+                const inputRotDeg = parseInt(inputRotation.value);
+                const itemsPerPage = parseInt(layoutSelect.value);
+                const addPageNumbers = pageNumCheck.checked;
+                const pageNumPos = pageNumPosition.value;
+                const pageNumRot = parseInt(pageNumRotation.value);
+                const fontSize = parseInt(pageNumFontSize.value);
+                
+                let rows, cols;
+                if (itemsPerPage === 4) { rows = 2; cols = 2; } else { rows = 2; cols = 1; }
+                const cellWidth = canvasWidth / cols;
+                const cellHeight = canvasHeight / rows;
+                const safeWidth = cellWidth - (padding * 2);
+                const safeHeight = cellHeight - (padding * 2);
+
+                // Embed font for page numbers
+                const font = await newDoc.embedFont(StandardFonts.Helvetica);
+
+                let outputPageNum = 0;
+                for (let i = 0; i < pageCount; i += itemsPerPage) {
+                    outputPageNum++;
+                    const newPage = newDoc.addPage(PageSizes.A4);
+                    
+                    for (let j = 0; j < itemsPerPage; j++) {
+                        if (i + j >= pageCount) break;
+                        let colIndex, rowIndex;
+                        if (itemsPerPage === 4) {
+                            colIndex = j % 2;
+                            rowIndex = Math.floor(j / 2);
+                        } else {
+                            colIndex = 0;
+                            rowIndex = j;
+                        }
+                        const cellX = colIndex * cellWidth;
+                        const cellY = (rows - 1 - rowIndex) * cellHeight;
+                        const centerX = cellX + (cellWidth / 2);
+                        const centerY = cellY + (cellHeight / 2);
+                        const srcPage = pages[i + j];
+                        const embeddedPage = await newDoc.embedPage(srcPage);
+                        
+                        // For 90° and 270°, width and height swap
+                        const isRotated90or270 = (inputRotDeg === 90 || inputRotDeg === 270);
+                        const effectiveSrcWidth = isRotated90or270 ? embeddedPage.height : embeddedPage.width;
+                        const effectiveSrcHeight = isRotated90or270 ? embeddedPage.width : embeddedPage.height;
+                        
+                        const scale = Math.min(safeWidth / effectiveSrcWidth, safeHeight / effectiveSrcHeight);
+                        const contentWidth = effectiveSrcWidth * scale;
+                        const contentHeight = effectiveSrcHeight * scale;
+                        
+                        const drawX = centerX - (contentWidth / 2);
+                        const drawY = centerY - (contentHeight / 2);
+                        
+                        let drawOptions = {
+                            xScale: scale,
+                            yScale: scale,
+                            rotate: degrees(-inputRotDeg)
+                        };
+                        
+                        // Adjust position based on rotation (following original working pattern)
+                        switch (inputRotDeg) {
+                            case 90:
+                                drawOptions.x = drawX;
+                                drawOptions.y = drawY + contentHeight;
+                                break;
+                            case 180:
+                                drawOptions.x = drawX + contentWidth;
+                                drawOptions.y = drawY + contentHeight;
+                                break;
+                            case 270:
+                                drawOptions.x = drawX + contentWidth;
+                                drawOptions.y = drawY;
+                                break;
+                            case 0:
+                            case 360:
+                            default:
+                                drawOptions.x = drawX;
+                                drawOptions.y = drawY;
+                                break;
+                        }
+                        
+                        newPage.drawPage(embeddedPage, drawOptions);
+                        if (drawBorders) {
+                            newPage.drawRectangle({
+                                x: drawX, y: drawY,
+                                width: contentWidth, height: contentHeight,
+                                borderColor: rgb(0, 0, 0), borderWidth: 1,
+                            });
+                        }
+                    }
+
+                    // Draw page number on the output page (once per A4 sheet)
+                    if (addPageNumbers) {
+                        const pageNumText = String(outputPageNum);
+                        const textWidth = font.widthOfTextAtSize(pageNumText, fontSize);
+                        const numPadding = 20; // padding from edge of A4 page
+                        let textX, textY;
+
+                        // Calculate position based on selected side of the A4 page
+                        switch (pageNumPos) {
+                            case 'bottom':
+                                textX = canvasWidth / 2 - textWidth / 2;
+                                textY = numPadding;
+                                break;
+                            case 'top':
+                                textX = canvasWidth / 2 - textWidth / 2;
+                                textY = canvasHeight - numPadding - fontSize;
+                                break;
+                            case 'left':
+                                textX = numPadding;
+                                textY = canvasHeight / 2 - fontSize / 2;
+                                break;
+                            case 'right':
+                                textX = canvasWidth - numPadding - textWidth;
+                                textY = canvasHeight / 2 - fontSize / 2;
+                                break;
+                        }
+
+                        // Draw text with rotation around its center
+                        const rotRad = (pageNumRot * Math.PI) / 180;
+                        newPage.drawText(pageNumText, {
+                            x: textX,
+                            y: textY,
+                            size: fontSize,
+                            font: font,
+                            color: rgb(0, 0, 0),
+                            rotate: degrees(-pageNumRot),
+                        });
+                    }
+                }
+                generatedPdfBytes = await newDoc.save();
+                const blob = new Blob([generatedPdfBytes], { type: 'application/pdf' });
+                pdfPreview.src = URL.createObjectURL(blob);
+                emptyState.style.display = 'none';
+                status.textContent = "Done!";
+                downloadBtn.style.display = 'block';
+            } catch (err) {
+                console.error(err);
+                alert("Error: " + err.message);
+                status.textContent = "Error.";
+            } finally {
+                spinner.style.display = 'none';
+                processBtn.disabled = false;
+            }
+        }
+
+        function downloadPdf() {
+            if (!generatedPdfBytes) return;
+            let fileName = pdfNameInput.value.trim();
+            if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
+            const blob = new Blob([generatedPdfBytes], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        }
+    </script>
+</body>
+</html>

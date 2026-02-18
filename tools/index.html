@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Tools – PDF Utilities</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0d1a;
+            --bg-card: #252033;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-purple: #a78bfa;
+            --accent-blue: #60a5fa;
+            --accent-green: #34d399;
+            --accent-teal: #2dd4bf;
+            --border: rgba(167, 139, 250, 0.2);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Open Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem 1.25rem;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 920px; margin: 0 auto; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-teal);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: color 0.2s, gap 0.2s;
+        }
+        .back-link:hover { color: var(--accent-green); gap: 0.75rem; }
+
+        header { text-align: center; margin-bottom: 2.5rem; }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        h1 .purple { color: var(--accent-purple); }
+        h1 .green { color: var(--accent-green); }
+        h1 .blue { color: var(--accent-blue); }
+        .subtitle { color: var(--text-muted); font-size: 1.05rem; margin: 0; }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem 1.75rem;
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-teal);
+            box-shadow: var(--shadow);
+        }
+
+        .tool-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .tool-card h2 {
+            margin: 0 0 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-teal);
+        }
+        .tool-card p { margin: 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        footer code {
+            background: rgba(167, 139, 250, 0.15);
+            color: var(--accent-teal);
+            padding: 0.2em 0.5em;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Portfolio</a>
+
+        <header>
+            <h1><span class="purple">Research</span> <span class="green">Tools</span></h1>
+            <p class="subtitle">Client-side PDF utilities — open-source & ad-free</p>
+        </header>
+
+        <div class="tools-grid">
+            <a href="pdf-layout-merge.html" class="tool-card">
+                <span class="tool-icon">🖨️</span>
+                <h2>Handout Generator</h2>
+                <p>Layout multiple pages on a single A4 sheet (2-up or 4-up).</p>
+            </a>
+            <a href="merge-pdf.html" class="tool-card">
+                <span class="tool-icon">📑</span>
+                <h2>PDF Merger</h2>
+                <p>Combine separate PDFs into a single file.</p>
+            </a>
+            <a href="img2pdf.html" class="tool-card">
+                <span class="tool-icon">📸</span>
+                <h2>Image to PDF</h2>
+                <p>Convert images into a single PDF document.</p>
+            </a>
+            <!-- Add more tools: duplicate a .tool-card block and add the same entry to src/scenes/Tools.jsx -->
+        </div>
+
+        <footer>
+            <p>Built with <code>pdf-lib</code>. All processing runs in your browser.</p>
+        </footer>
+    </div>
+</body>
+</html>
