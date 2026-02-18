@@ -6,10 +6,12 @@
     <title>Verathagnus | PDF Utilities</title>
     <style>
         :root {
+            /* Samplings from your portfolio UI */
             --bg-deep-blue: #010d3e; 
             --text-white: #ffffff;
             --accent-teal: #2dd4bf; /* Teal-500 */
-            --accent-yellow: #fdcc49; /* Yellow */
+            --accent-yellow: #fdcc49; /* Yellow from your selected page state */
+            --muted-text: #a0aec0;
         }
 
         body {
@@ -19,13 +21,18 @@
             line-height: 1.6;
             margin: 0;
             padding: 40px 20px;
+            /* Added radial gradient for depth as discussed */
             background: radial-gradient(circle at top right, #0a192f, var(--bg-deep-blue));
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
+            width: 100%;
         }
 
         header {
@@ -33,97 +40,154 @@
             margin-bottom: 50px;
         }
 
-        h1 { font-weight: 300; font-size: 2.5rem; margin-bottom: 10px; }
-        p.subtitle { color: #666; font-size: 1.1rem; }
+        h1 { 
+            font-family: 'Playfair Display', serif; /* Matching your BP logo style */
+            font-weight: 700; 
+            font-size: 2.8rem; 
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle { 
+            color: var(--muted-text); 
+            font-size: 1.1rem; 
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
         }
+
         .tool-card {
-            background: rgba(255, 255, 255, 0.05); /* Semi-transparent white */
-            backdrop-filter: blur(10px);            /* Frosted glass effect */
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-            padding: 30px;
-            border-radius: 12px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: rgba(255, 255, 255, 0.05); /* Glassmorphism base */
+            backdrop-filter: blur(12px);           /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 35px;
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
-            color: #ffffff; /* Ensure text is white for the dark background */
+            color: var(--text-white);
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow: hidden;
         }
 
+        /* Hover State */
         .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            border-color: var(--accent);
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-teal);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         .tool-icon {
             font-size: 2.5rem;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.3));
         }
 
         .tool-card h2 {
-            margin: 0 0 10px 0;
-            font-size: 1.25rem;
-            color: var(--accent);
+            margin: 0 0 12px 0;
+            font-size: 1.4rem;
+            color: var(--accent-yellow); /* Matching your React App's highlight color */
         }
 
         .tool-card p {
             margin: 0;
             font-size: 0.95rem;
-            color: #555;
+            color: var(--muted-text);
+            line-height: 1.5;
+        }
+
+        /* Decorative underline on hover */
+        .tool-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--accent-teal);
+            transition: width 0.4s ease;
+        }
+
+        .tool-card:hover::after {
+            width: 100%;
         }
 
         footer {
-            margin-top: 60px;
+            margin-top: 80px;
             text-align: center;
-            font-size: 0.9rem;
-            color: #888;
+            font-size: 0.85rem;
+            color: var(--muted-text);
+        }
+
+        code {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent-teal);
+            padding: 2px 6px;
+            border-radius: 4px;
         }
 
         .back-link {
             text-decoration: none;
-            color: var(--accent);
-            display: inline-block;
-            margin-bottom: 20px;
+            color: var(--accent-teal);
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: gap 0.3s ease;
+            gap: 8px;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+            color: var(--accent-yellow);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <a href="../index.html" class="back-link">← Back to Resume</a>
+    <a href="../index.html" class="back-link">
+        <span>←</span> Back to Portfolio
+    </a>
     
     <header>
-        <h1>Personal Research Tools</h1>
-        <p class="subtitle">Ad-free, client-side PDF utilities for academic workflow.</p>
+        <h1>Research Utilities</h1>
+        <p class="subtitle">
+            Secure, client-side PDF tools designed for academic workflows. 
+            No data ever leaves your local machine.
+        </p>
     </header>
 
     <div class="tools-grid">
         <a href="pdf-layout-merge.html" class="tool-card">
             <div class="tool-icon">🖨️</div>
             <h2>Handout Generator</h2>
-            <p>Convert standard PDFs into 2-up or 4-up grid layouts for efficient printing.</p>
+            <p>Layout multiple pages on a single A4 sheet (2-up or 4-up). Perfect for research paper summaries.</p>
         </a>
 
         <a href="merge-pdf.html" class="tool-card">
             <div class="tool-icon">📑</div>
             <h2>PDF Merger</h2>
-            <p>Combine multiple PDF documents into a single file with drag-and-drop reordering.</p>
+            <p>Combine separate research chapters or appendices into a single document with drag-and-drop ease.</p>
         </a>
 
         <a href="img2pdf.html" class="tool-card">
             <div class="tool-icon">📸</div>
             <h2>Image to PDF</h2>
-            <p>Convert PNG/JPG scans or figures into a high-quality PDF document.</p>
+            <p>Convert scanned figures or whiteboard notes into clean, high-resolution PDF documents.</p>
         </a>
     </div>
 
     <footer>
-        <p>Built with <code>pdf-lib</code>. All processing happens locally in your browser.</p>
+        <p>Built for performance with <code>pdf-lib</code>. Open-source & ad-free.</p>
     </footer>
 </div>
 
