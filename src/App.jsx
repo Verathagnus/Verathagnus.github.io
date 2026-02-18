@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import useMediaQuery from "./hooks/useMediaQuery";
+import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./scenes/Navbar";
 import DotGroup from "./scenes/DotGroup";
 import Landing from "./scenes/Landing";
 import Skills from "./scenes/Skills";
-import Projects from "./scenes/Projects";
+import Tools from "./scenes/Tools";
 import Contact from "./scenes/Contact";
 import Footer from "./scenes/Footer";
 import TechStack from "./scenes/TechStack";
@@ -24,7 +24,7 @@ function App() {
     setIsTopOfPage(window.scrollY === 0);
 
     // 2. Detect Active Section for DotGroup
-    const sections = ["home", "skills", "techstack", "projects", "contact"];
+    const sections = ["home", "skills", "techstack", "tools", "contact"];
     const scrollPosition = window.scrollY + 300; // Offset for better detection triggers
 
     for (const section of sections) {
@@ -43,7 +43,8 @@ function App() {
 }, []); // Added missing dependency array for performance
 
   return (
-    <div className="app bg-deep-blue">
+    <ThemeProvider>
+    <div className="app bg-theme-bg text-theme-text">
       <Navbar
         selectedPage={selectedPage}
         setSelectedPage={setSelectedPage}
@@ -84,8 +85,8 @@ function App() {
               </section>
 
               <LineGradient />
-              <section id="projects">
-                <Projects />
+              <section id="tools">
+                <Tools />
               </section>
 
               <LineGradient />
@@ -98,6 +99,7 @@ function App() {
         )}
       </AnimatePresence>
     </div>
+    </ThemeProvider>
   );
 }
 

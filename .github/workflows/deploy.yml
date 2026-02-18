@@ -29,11 +29,6 @@ jobs:
       - name: Build project
         run: yarn build
 
-      - name: Copy Tools directory to build output
-        # This explicitly copies your Tools folder into the final dist directory.
-        # NOTE: Linux is case-sensitive. If your folder is named lowercase 'tools', change 'Tools' to 'tools' below.
-        run: cp -r Tools dist/
-
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
         with:

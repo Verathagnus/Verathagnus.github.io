@@ -1,14 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Custom brush stroke behind "Paul" */
+.brush-bg::before {
+  content: url('/brush.png');
+  position: absolute;
+  left: -25px;
+  top: -70px;
+  z-index: -1;
+}
+
+/* Light mode (default): purple, green, blue tints */
+[data-theme="light"] {
+  --bg-primary: #f0f4ff;
+  --bg-secondary: #e8eeff;
+  --bg-card: #ffffff;
+  --text-primary: #1a1f36;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  --accent-blue: #3b82f6;
+  --accent-purple: #7c3aed;
+  --accent-green: #10b981;
+  --accent-teal: #14b8a6;
+  --accent-highlight: #6366f1;
+  --border: rgba(124, 58, 237, 0.15);
+  --shadow: 0 4px 24px rgba(124, 58, 237, 0.08);
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --bg-primary: #0f0d1a;
+  --bg-secondary: #1a1625;
+  --bg-card: #252033;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --accent-blue: #60a5fa;
+  --accent-purple: #a78bfa;
+  --accent-green: #34d399;
+  --accent-teal: #2dd4bf;
+  --accent-highlight: #818cf8;
+  --border: rgba(167, 139, 250, 0.2);
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
 html,
 body,
 #root,
-.app{
+.app {
   height: 100%;
-  background-color: #010026;
-  @apply text-white;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

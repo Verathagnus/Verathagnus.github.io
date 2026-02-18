@@ -6,7 +6,7 @@ const TechStack = () => {
   const isAboveMediumScreens = useMediaQuery("(min-width: 1060px)");
 
   return (
-    <section id="tech-stack" className="pt-10 pb-24 mb-36">
+    <section id="techstack" className="pt-10 pb-24 mb-36">
       <div className="md:flex md:justify-between md:gap-16 mt-32">
         <motion.div
           className="md:w-1/3"
@@ -19,8 +19,8 @@ const TechStack = () => {
             visible: { opacity: 1, x: 0 },
           }}
         >
-          <p className="font-playfair font-semibold text-4xl mb-5">
-            TECH <span className="text-teal-500">STACK</span>
+          <p className="font-playfair font-semibold text-4xl mb-5 text-theme-text">
+            TECH <span className="text-theme-blue">STACK</span>
           </p>
           <LineGradient width="w-1/3" />
           {/* <p className="mt-10 mb-7">Text Desscription</p> */}
@@ -41,7 +41,7 @@ const TechStack = () => {
               }}
             >
               <div className="relative h-32">
-                <div className="z-10">
+                <div className="z-10 text-theme-text">
                   <p className="font-playfair font-semibold text-3xl mt-3">
                     React
                   </p>
@@ -68,7 +68,7 @@ const TechStack = () => {
             </motion.div>
           <div className="mt-16 md:mt-0 max-w-[600px]">
             {isAboveMediumScreens ? (
-              <div className="relative z-0 ml-20 before:absolute before:-top-10 before:-left-10 before:w-full before:h-full before:border-2 before:border-blue before:z-[-1]">
+              <div className="relative z-0 ml-20 before:absolute before:-top-10 before:-left-10 before:w-full before:h-full before:border-2 before:border-theme-purple/50 before:z-[-1]">
                 <img alt="skills" src={TechStackImage} className="z-10" />
               </div>
             ) : (

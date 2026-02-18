@@ -10,10 +10,7 @@ const Contact = () => {
   } = useForm();
   const onSubmit = async (e) => {
     const isValid = await trigger();
-    if (!isValid) {
-      e.preventDefault();
-      console.log(formState);
-    }
+    if (!isValid) e.preventDefault();
   };
   return (
     <section id="contact" className="py-48">
@@ -30,8 +27,9 @@ const Contact = () => {
         }}
       >
         <div>
-          <p className="font-playfair font-semibold text-4xl mb-5 text-teal-500">
-            <span className="text-yellow">CONTACT ME</span> TO GET STARTED
+          <p className="font-playfair font-semibold text-4xl mb-5 text-theme-text">
+            <span className="text-theme-green">CONTACT ME</span>{" "}
+            <span className="text-theme-muted">TO GET STARTED</span>
           </p>
           <div className="flex md:justify-end my-5">
             <LineGradient width="w-[55.5%]" />
@@ -101,13 +99,11 @@ const Contact = () => {
                   maxLength: 2000,
                 },
               },
-            ].map(({ placeholder, registerParams, type, fieldName }) => {
-              console.log(placeholder, registerParams, type, fieldName);
-              return (
-                <>
+            ].map(({ placeholder, registerParams, type, fieldName, errorFieldLabel }) => (
+                <div key={fieldName}>
                   {type === "textarea" ? (
                     <textarea
-                      className="w-full bg-blue font-semibold placeholder-opaque-black p-3 mb-5"
+                      className="w-full bg-theme-card border border-theme-purple/20 text-theme-text font-semibold placeholder-theme-muted p-3 mb-5 rounded-lg"
                       placeholder={placeholder}
                       rows="4"
                       cols="50"
@@ -115,7 +111,7 @@ const Contact = () => {
                     />
                   ) : (
                     <input
-                      className="w-full bg-blue font-semibold placeholder-opaque-black p-3 mb-5"
+                      className="w-full bg-theme-card border border-theme-purple/20 text-theme-text font-semibold placeholder-theme-muted p-3 mb-5 rounded-lg"
                       type={type}
                       placeholder={placeholder}
                       {...register(fieldName, registerParams)}
@@ -123,7 +119,7 @@ const Contact = () => {
                   )}
 
                   {errors[fieldName] ? (
-                    <p className="text-red mt-1">
+                    <p className="text-theme-purple mt-1 text-sm">
                       {errors[fieldName].type === "required"
                         ? "This field is required."
                         : null}
@@ -135,13 +131,12 @@ const Contact = () => {
                         : null}
                     </p>
                   ) : null}
-                </>
-              );
-            })}
+                </div>
+            ))}
 
             <button
               type="submit"
-              className="p-5 bg-yellow font-semibold text-deep-blue hover:bg-red hover:text-white transition duration-500"
+              className="p-5 bg-theme-green font-semibold text-white rounded-lg hover:bg-theme-teal transition duration-300"
             >
               SEND ME A MESSAGE
             </button>

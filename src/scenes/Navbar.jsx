@@ -1,40 +1,25 @@
-import { useState, useRef, useEffect, Fragment } from "react";
+import { useState, useRef, Fragment } from "react";
 import useMediaQuery from "../hooks/useMediaQuery";
 import AnchorLink from "react-anchor-link-smooth-scroll";
 import MenuIcon from "/menu-icon.svg";
 import PlainResume from "/plain-resume.pdf";
 import ATSResume from "/ats-compliant-resume.pdf";
-import CloseIcon from "/close-icon.svg";
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
+import { useTheme } from "../context/ThemeContext";
 
 // Helper component to handle internal vs external links
-const NavLink = ({ page, selectedPage, setSelectedPage, href, isExternal }) => {
-  if (isExternal) {
-    return (
-      <a
-        className="hover:text-yellow transition duration-500"
-        href={href}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {page}
-      </a>
-    );
-  }
-
-  return (
-    <AnchorLink
-      className={`${
-        selectedPage === href ? "text-yellow" : ""
-      } hover:text-yellow transition duration-500`}
-      href={`#${href}`}
-      onClick={() => setSelectedPage(href)}
-    >
-      {page}
-    </AnchorLink>
-  );
-};
+const NavLink = ({ page, selectedPage, setSelectedPage, href }) => (
+  <AnchorLink
+    className={`${
+      selectedPage === href ? "text-theme-highlight" : "text-theme-text"
+    } hover:text-theme-teal transition duration-300`}
+    href={`#${href}`}
+    onClick={() => setSelectedPage(href)}
+  >
+    {page}
+  </AnchorLink>
+);
 
 const Navbar = ({
   selectedPage,
@@ -43,20 +28,20 @@ const Navbar = ({
   isDropdownOpen,
   setIsDropdownOpen,
 }) => {
-  const [isMenuToggled, setIsMenuToggled] = useState(false);
   const [viewResume, setViewResume] = useState(1);
   const buttonRef = useRef(null);
   const isAboveSmallScreens = useMediaQuery("(min-width: 768px)");
-  
-  // Refined: teal-500 is very bright; consider a semi-transparent deep-blue for research profile
-  const navbarBackground = isTopOfPage ? "" : "bg-deep-blue bg-opacity-90 backdrop-blur-md shadow-lg";
+  const { theme, toggleTheme } = useTheme();
+
+  const navbarBackground = isTopOfPage
+    ? ""
+    : "bg-theme-bg/95 backdrop-blur-md shadow-theme border-b border-theme-purple/10";
 
   const linksList = [
     { id: 1, page: "Home", href: "home" },
     { id: 2, page: "Skills", href: "skills" },
-    { id: 4, page: "Tech Stack", href: "tech-stack" },
-    { id: 3, page: "Projects", href: "projects" },
-    { id: 6, page: "Tools", href: "/tools/index.html", isExternal: true }, // Added Tools
+    { id: 3, page: "Tech Stack", href: "techstack" },
+    { id: 4, page: "Tools", href: "tools" },
     { id: 5, page: "Contact", href: "contact" },
   ];
 
@@ -83,7 +68,7 @@ const Navbar = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-deep-blue bg-opacity-80 transition-opacity" />
+            <div className="fixed inset-0 bg-theme-bg/80 backdrop-blur-sm transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
@@ -97,41 +82,39 @@ const Navbar = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
-                  {/* Modal Content Header */}
-                  <div className="bg-white px-6 py-5 flex justify-between items-center border-b">
-                    <Dialog.Title className="text-xl font-playfair font-bold text-deep-blue">
+                <Dialog.Panel className="relative transform overflow-hidden rounded-2xl bg-theme-card text-theme-text border border-theme-purple/20 shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
+                  <div className="bg-theme-card px-6 py-5 flex justify-between items-center border-b border-theme-purple/20">
+                    <Dialog.Title className="text-xl font-playfair font-bold text-theme-text">
                       Resume Selection
                     </Dialog.Title>
                     <XMarkIcon
-                      className="w-6 h-6 cursor-pointer text-dark-grey hover:text-red transition duration-300"
+                      className="w-6 h-6 cursor-pointer text-theme-muted hover:text-theme-highlight transition duration-300"
                       onClick={() => setIsDropdownOpen(false)}
                     />
                   </div>
 
-                  {/* PDF Selection & Preview */}
-                  <div className="p-6 bg-gray-50">
+                  <div className="p-6 bg-theme-bg">
                     <div className="flex flex-col sm:flex-row gap-4 justify-between mb-6">
-                      <div className="inline-flex rounded-lg shadow-sm">
+                      <div className="inline-flex rounded-lg shadow-sm border border-theme-purple/20 overflow-hidden">
                         <button
                           onClick={() => setViewResume(1)}
-                          className={`px-4 py-2 text-sm font-semibold rounded-l-lg border transition ${
-                            viewResume === 1 ? "bg-blue text-white" : "bg-white text-dark-grey"
+                          className={`px-4 py-2 text-sm font-semibold transition ${
+                            viewResume === 1 ? "bg-theme-blue text-white" : "bg-theme-card text-theme-muted"
                           }`}
                         >
                           Standard
                         </button>
                         <button
                           onClick={() => setViewResume(2)}
-                          className={`px-4 py-2 text-sm font-semibold rounded-r-lg border-y border-r transition ${
-                            viewResume === 2 ? "bg-teal-500 text-white" : "bg-white text-dark-grey"
+                          className={`px-4 py-2 text-sm font-semibold border-l border-theme-purple/20 transition ${
+                            viewResume === 2 ? "bg-theme-teal text-white" : "bg-theme-card text-theme-muted"
                           }`}
                         >
                           ATS Friendly
                         </button>
                       </div>
                       <button
-                        className="bg-red px-6 py-2 text-white font-bold rounded-lg hover:bg-opacity-80 transition"
+                        className="bg-theme-purple px-6 py-2 text-white font-bold rounded-lg hover:opacity-90 transition"
                         onClick={handleDownloadClick}
                       >
                         Download PDF
@@ -154,34 +137,55 @@ const Navbar = ({
       {/* Main Navigation */}
       <nav className={`${navbarBackground} z-40 w-full fixed top-0 py-6 transition-all duration-300`}>
         <div className="flex items-center justify-between mx-auto w-5/6">
-          <h4 className="font-playfair text-3xl font-bold tracking-tighter">BP</h4>
-          
+          <h4 className="font-playfair text-3xl font-bold tracking-tighter text-theme-text">BP</h4>
+
           {isAboveSmallScreens ? (
-            <div className="flex items-center gap-10 font-opensans text-sm font-semibold">
+            <div className="flex items-center gap-8 font-opensans text-sm font-semibold">
               {linksList.map((link) => (
                 <NavLink
                   key={link.id}
                   href={link.href}
                   page={link.page}
-                  isExternal={link.isExternal}
                   selectedPage={selectedPage}
                   setSelectedPage={setSelectedPage}
                 />
               ))}
               <button
-                className="bg-red px-6 py-2 rounded-full text-white hover:bg-yellow hover:text-deep-blue transition duration-300"
+                type="button"
+                onClick={toggleTheme}
+                className="p-2 rounded-full border border-theme-purple/30 text-theme-text hover:bg-theme-purple/20 transition"
+                aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              >
+                {theme === "light" ? (
+                  <MoonIcon className="w-5 h-5" />
+                ) : (
+                  <SunIcon className="w-5 h-5" />
+                )}
+              </button>
+              <button
+                className="bg-theme-purple px-6 py-2 rounded-full text-white hover:bg-theme-highlight transition duration-300"
                 onClick={() => setIsDropdownOpen(true)}
               >
                 Resume
               </button>
             </div>
           ) : (
-            <button
-              className="rounded-full bg-red p-2 hover:scale-110 transition"
-              onClick={() => setIsMenuToggled(!isMenuToggled)}
-            >
-              <img alt="Menu" src={MenuIcon} />
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="p-2 rounded-full border border-theme-purple/30 text-theme-text"
+                aria-label="Toggle theme"
+              >
+                {theme === "light" ? <MoonIcon className="w-5 h-5" /> : <SunIcon className="w-5 h-5" />}
+              </button>
+              <button
+                className="rounded-full bg-theme-purple p-2 hover:opacity-90 transition"
+                onClick={() => setIsDropdownOpen(true)}
+              >
+                <img alt="Menu" src={MenuIcon} />
+              </button>
+            </div>
           )}
 
           {/* Mobile Menu Logic remains similar, but ensure Link is used */}

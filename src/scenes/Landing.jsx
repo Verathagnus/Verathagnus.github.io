@@ -1,36 +1,15 @@
-import useMediaQuery from "../hooks/useMediaQuery";
 import { motion } from "framer-motion";
 import AnchorLink from "react-anchor-link-smooth-scroll";
-import ProfileImage from "/profile-image-2-bg.png";
-import SocialMediaIcons from "../components/SocialMediaIcons"
-const Landing = ({ setSelectedPage }) => {
-  const isAboveMediumScreens = useMediaQuery("(min-width: 1060px)");
+import SocialMediaIcons from "../components/SocialMediaIcons";
 
+const Landing = ({ setSelectedPage }) => {
   return (
     <section
       id="home"
-      className="md:flex md:justify-between md:items-center gap-16 md:h-full py-100"
+      className="md:flex md:justify-center md:items-start pt-28 pb-16 md:pt-36 md:pb-24"
     >
-      {/* Image section */}
-      <div className="basis-3/5 z-10 mt-16 md:mt-32 flex justify-center md:order-2">
-        {isAboveMediumScreens ? (
-          <div className="relative z-0 ml-20 before:absolute before:-top-20 before:-left-20 before:rounded-t-[400px] before:w-full before:max-w-[400px] md:before:max-w-[300px] before:h-full before:border-2 before:border-blue before:z-[-1]">
-            <img
-              alt="profile"
-              src={ProfileImage}
-              className="hover:filter hover:saturate-200 transition duration-500 z-10 w-full max-w-[400px] md:max-w-[300px] rounded-t-[400px] bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500"
-            />
-          </div>
-        ) : (
-          <img
-            alt="profile"
-            src={ProfileImage}
-            className="hover:filter hover:saturate-200 transition duration-500 z-10 w-full max-w-[300px] md:max-w-[600px] rounded-t-[400px] bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500"
-          />
-        )}
-      </div>
       {/* Main Section */}
-      <div className="z-30 basis-2/5 mt-12 md:mt-32">
+      <div className="z-30 w-full max-w-3xl">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -41,19 +20,19 @@ const Landing = ({ setSelectedPage }) => {
             visible: { opacity: 1, x: 0 },
           }}
         >
-          <p className="text-6xl font-playfair z-5 text-center md:text-start">
-            <span className="pb-7 inline-block">Bishwaraj &nbsp;</span>
-            <span className="xs:relative xs:text-deep-blue xs:font-semibold z-20 xs:before:content-brush before:absolute before:-left-[25px] before:-top-[70px] before:z-[-10]">
+          <p className="text-5xl md:text-7xl leading-[1.05] font-playfair z-10 text-center md:text-start text-theme-text tracking-tight">
+          <span className="pb-7 inline-block">Bishwaraj &nbsp;</span>
+            <span className="relative font-semibold z-10 brush-bg">
               Paul
             </span>
           </p>
-          <p className="mt-10 mb-7 text-sm text-center md:text-start">
+          <p className="mt-10 mb-8 text-sm md:text-base text-center md:text-start text-theme-muted">
             Full Stack Developer specializing in MERN Stack
           </p>
         </motion.div>
-        {/* Call To Actions */}
+        {/* Call To Actions - combined/joined button aesthetic */}
         <motion.div
-          className="flex mt-5 justify-center md:justify-start"
+          className="flex mt-4 justify-center md:justify-start"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}
@@ -63,25 +42,27 @@ const Landing = ({ setSelectedPage }) => {
             visible: { opacity: 1, x: 0 },
           }}
         >
-          <AnchorLink
-            className="bg-gradient-rainbow text-deep-blue rounded-sm py-3 px-7 font-semibold hover:bg-blue hover:text-white transition duration-500"
-            onClick={() => setSelectedPage("contact")}
-            href="#contact"
-          >
-            Contact Me
-          </AnchorLink>
-          <AnchorLink
-            className="rounded-r-sm bg-gradient-rainblue py-0.5 pr-0.5"
-            onClick={() => setSelectedPage("contact")}
-            href="#contact"
-          >
-            <div className="bg-deep-blue hover:text-red transition duration-500 w-full h-full flex items-center justify-center font-playfair px-10">
-            Let's talk.
-            </div>
-          </AnchorLink>
+          <div className="inline-flex">
+            <AnchorLink
+              className="inline-flex items-center justify-center rounded-l-sm bg-gradient-rainbow text-theme-text dark:text-white py-3 px-7 font-semibold hover:opacity-95 transition duration-300"
+              onClick={() => setSelectedPage("contact")}
+              href="#contact"
+            >
+              Contact Me
+            </AnchorLink>
+            <AnchorLink
+              className="rounded-r-sm bg-gradient-rainblue p-[2px] pl-0"
+              onClick={() => setSelectedPage("contact")}
+              href="#contact"
+            >
+              <span className="inline-flex bg-theme-bg hover:opacity-90 text-theme-text transition duration-300 h-full items-center justify-center font-playfair px-10 py-[10px] rounded-r-[2px]">
+                Let's talk.
+              </span>
+            </AnchorLink>
+          </div>
         </motion.div>
         <motion.div
-          className="flex mt-5 justify-center md:justify-start"
+          className="flex justify-center md:justify-start"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}

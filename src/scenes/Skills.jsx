@@ -19,8 +19,8 @@ const Skills = () => {
             visible: { opacity: 1, x: 0 },
           }}
         >
-          <p className="font-playfair font-semibold text-4xl mb-5">
-            MY <span className="text-teal-500">SKILLS</span>
+          <p className="font-playfair font-semibold text-4xl mb-5 text-theme-text">
+            MY <span className="text-theme-green">SKILLS</span>
           </p>
           <LineGradient width="w-1/3"/>
           {/* <p className="mt-10 mb-7">Text Desscription</p> */}
@@ -28,7 +28,7 @@ const Skills = () => {
 
         <div className="mt-16 md:mt-0">
           {isAboveMediumScreens ? (
-            <div className="relative z-0 ml-20 before:absolute before:-top-10 before:-left-10 before:w-full before:h-full before:border-2 before:border-blue before:z-[-1]">
+            <div className="relative z-0 ml-20 before:absolute before:-top-10 before:-left-10 before:w-full before:h-full before:border-2 before:border-theme-blue before:z-[-1]">
               <img alt="skills" src={SkillsImage} className="z-10" />
             </div>
           ) : (
@@ -53,14 +53,14 @@ const Skills = () => {
         >
           <div className="relative h-32">
             <div className="z-10">
-              <p className="font-playfair font-semibold text-5xl">01</p>
-              <p className="font-playfair font-semibold text-3xl mt-3">
+              <p className="font-playfair font-semibold text-5xl text-theme-text">01</p>
+              <p className="font-playfair font-semibold text-3xl mt-3 text-theme-text">
                 Experience
               </p>
             </div>
-            <div className="w-1/2 md:w-3/4 h-32 bg-blue absolute right-0 top-0 z-[-1]" />
+            <div className="w-1/2 md:w-3/4 h-32 bg-theme-blue/30 absolute right-0 top-0 z-[-1]" />
           </div>
-          <p className="mt-5">Experienced in both Professional and Freelance Development.</p>
+          <p className="mt-5 text-theme-muted">Experienced in both Professional and Freelance Development.</p>
         </motion.div>
 
         {/* Innovative */}
@@ -77,14 +77,14 @@ const Skills = () => {
         >
           <div className="relative h-32">
             <div className="z-10">
-              <p className="font-playfair font-semibold text-5xl">02</p>
-              <p className="font-playfair font-semibold text-3xl mt-3">
+              <p className="font-playfair font-semibold text-5xl text-theme-text">02</p>
+              <p className="font-playfair font-semibold text-3xl mt-3 text-theme-text">
                 Innovative
               </p>
             </div>
-            <div className="w-1/2 md:w-3/4 h-32 bg-teal-500 absolute right-0 top-0 z-[-1]" />
+            <div className="w-1/2 md:w-3/4 h-32 bg-theme-green/30 absolute right-0 top-0 z-[-1]" />
           </div>
-          <p className="mt-5">Using various technologies to maintain budget and exceed requirements.</p>
+          <p className="mt-5 text-theme-muted">Using various technologies to maintain budget and exceed requirements.</p>
         </motion.div>
 
         {/* Imaginative */}
@@ -101,14 +101,14 @@ const Skills = () => {
         >
           <div className="relative h-32">
             <div className="z-10">
-              <p className="font-playfair font-semibold text-5xl">03</p>
-              <p className="font-playfair font-semibold text-3xl mt-3">
+              <p className="font-playfair font-semibold text-5xl text-theme-text">03</p>
+              <p className="font-playfair font-semibold text-3xl mt-3 text-theme-text">
                 Variety
               </p>
             </div>
-            <div className="w-1/2 md:w-3/4 h-32 bg-red absolute right-0 top-0 z-[-1]" />
+            <div className="w-1/2 md:w-3/4 h-32 bg-theme-purple/30 absolute right-0 top-0 z-[-1]" />
           </div>
-          <p className="mt-5">Invoved in a variety of tech stacks aside from MERN such as Django, Wordpress and Rust.</p>
+          <p className="mt-5 text-theme-muted">Involved in a variety of tech stacks aside from MERN such as Django, WordPress and Rust.</p>
         </motion.div>
       </div>
     </section>
