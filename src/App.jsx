@@ -19,12 +19,28 @@ function App() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsTopOfPage(window.scrollY === 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []); // Added missing dependency array for performance
+  const handleScroll = () => {
+    // 1. Detect Top of Page
+    setIsTopOfPage(window.scrollY === 0);
+
+    // 2. Detect Active Section for DotGroup
+    const sections = ["home", "skills", "techstack", "projects", "contact"];
+    const scrollPosition = window.scrollY + 300; // Offset for better detection triggers
+
+    for (const section of sections) {
+      const element = document.getElementById(section);
+      if (element) {
+        const { offsetTop, offsetHeight } = element;
+        if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+          setSelectedPage(section);
+        }
+      }
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []); // Added missing dependency array for performance
 
   return (
     <div className="app bg-deep-blue">
