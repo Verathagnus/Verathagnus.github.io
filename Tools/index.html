@@ -39,18 +39,17 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 25px;
         }
-
         .tool-card {
-            background: var(--card);
+            background: rgba(255, 255, 255, 0.05); /* Semi-transparent white */
+            backdrop-filter: blur(10px);            /* Frosted glass effect */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             transition: transform 0.2s, box-shadow 0.2s;
             text-decoration: none;
-            color: inherit;
+            color: #ffffff; /* Ensure text is white for the dark background */
             display: flex;
             flex-direction: column;
-            border: 1px solid #eee;
         }
 
         .tool-card:hover {
