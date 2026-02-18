@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Multiple PDFs Utility</title>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #f4f6f8; color: #333; }
+        h1 { text-align: center; color: #d32f2f; }
+
+        .controls {
+            background: white;
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .input-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+
+        #pdfNameInput {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        /* Drop Zone Styles */
+        #dropZone {
+            border: 2px dashed #d32f2f;
+            background-color: #fffafa;
+            padding: 40px;
+            text-align: center;
+            color: #d32f2f;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        #dropZone.dragover { background-color: #ffebee; border-color: #b71c1c; transform: scale(1.01); }
+        #dropZone:hover { background-color: #fff5f5; }
+
+        /* File List Styles */
+        #fileListContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-height: 100px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .file-item {
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 10px;
+            width: 130px;
+            height: 140px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .file-item:active { cursor: grabbing; transform: scale(0.98); }
+
+        /* PDF Icon Styling (CSS Only) */
+        .pdf-icon {
+            width: 50px;
+            height: 65px;
+            background-color: #e53935;
+            border-radius: 4px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .pdf-icon::after {
+            content: 'PDF';
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .pdf-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            border-top: 15px solid white;
+            border-left: 15px solid rgba(0,0,0,0.2);
+            width: 0;
+        }
+
+        .file-item-name {
+            font-size: 0.85em;
+            text-align: center;
+            word-break: break-all;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+        }
+        .file-item:hover .remove-btn { display: block; }
+
+        button {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #b71c1c; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        #status { text-align: center; margin-top: 15px; font-weight: bold; color: #555; }
+    </style>
+</head>
+<body>
+
+    <h1>📑 Combine Multiple PDFs</h1>
+
+    <div class="controls">
+        <div class="input-group">
+            <label for="pdfNameInput">1. Output Filename:</label>
+            <input type="text" id="pdfNameInput" value="merged_document.pdf" placeholder="Enter filename">
+        </div>
+
+        <div class="input-group">
+            <label>2. Upload & Arrange (Drag to Reorder):</label>
+            <div id="dropZone">
+                📂 <strong>Drag & Drop PDF files here</strong><br>
+                <span style="font-size: 0.9em; color: #666;">or click to select</span>
+            </div>
+            <input type="file" id="fileInput" accept="application/pdf" multiple style="display: none;">
+        </div>
+
+        <button onclick="mergePdfs()" id="convertButton" disabled>3. Merge PDFs</button>
+        <p id="status"></p>
+    </div>
+
+    <div id="fileListContainer">
+        <div style="width:100%; text-align:center; color:#999; padding: 20px;">No files selected yet.</div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileListContainer = document.getElementById('fileListContainer');
+        const convertButton = document.getElementById('convertButton');
+        const statusElement = document.getElementById('status');
+        const pdfNameInput = document.getElementById('pdfNameInput');
+
+        let pdfFiles = []; // Holds the File objects
+        let sortableInstance = null;
+
+        // --- 1. FILE HANDLING ---
+
+        function handleFiles(newFiles) {
+            // Filter only PDFs
+            const validFiles = Array.from(newFiles).filter(f => f.type === 'application/pdf');
+
+            if (validFiles.length === 0 && newFiles.length > 0) {
+                alert("Only PDF files are supported!");
+                return;
+            }
+
+            // Add to our main array
+            pdfFiles = [...pdfFiles, ...validFiles];
+            renderFileList();
+            updateButtonState();
+        }
+
+        function removeFile(index) {
+            pdfFiles.splice(index, 1);
+            renderFileList();
+            updateButtonState();
+        }
+
+        function updateButtonState() {
+            if (pdfFiles.length >= 2) {
+                convertButton.disabled = false;
+                convertButton.textContent = `Merge ${pdfFiles.length} PDFs`;
+                statusElement.textContent = "Ready to merge.";
+            } else {
+                convertButton.disabled = true;
+                convertButton.textContent = "Add at least 2 PDFs";
+                statusElement.textContent = "";
+            }
+        }
+
+        // --- 2. DRAG & DROP UI LOGIC ---
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            e.target.value = null; // Reset
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        // --- 3. RENDERING & SORTING ---
+
+        function renderFileList() {
+            fileListContainer.innerHTML = '';
+
+            if (pdfFiles.length === 0) {
+                fileListContainer.innerHTML = '<div style="width:100%; text-align:center; color:#999; padding: 20px;">No files selected yet.</div>';
+                return;
+            }
+
+            pdfFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.setAttribute('data-index', index);
+
+                const removeBtn = document.createElement('div');
+                removeBtn.className = 'remove-btn';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.onclick = (e) => { e.stopPropagation(); removeFile(index); };
+
+                const icon = document.createElement('div');
+                icon.className = 'pdf-icon';
+
+                const name = document.createElement('div');
+                name.className = 'file-item-name';
+                name.textContent = file.name;
+
+                item.appendChild(removeBtn);
+                item.appendChild(icon);
+                item.appendChild(name);
+                fileListContainer.appendChild(item);
+            });
+
+            // Initialize Sortable
+            if (sortableInstance) sortableInstance.destroy();
+
+            sortableInstance = new Sortable(fileListContainer, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                onEnd: function (evt) {
+                    // Reorder the array based on DOM changes
+                    const item = pdfFiles.splice(evt.oldIndex, 1)[0];
+                    pdfFiles.splice(evt.newIndex, 0, item);
+                    // Re-render to update indices for remove buttons
+                    renderFileList();
+                }
+            });
+        }
+
+        // --- 4. MERGE LOGIC (PDF-LIB) ---
+
+        async function mergePdfs() {
+            if (pdfFiles.length < 2) return;
+
+            convertButton.disabled = true;
+            convertButton.textContent = "Processing...";
+            statusElement.textContent = "Reading and merging files...";
+
+            try {
+                const { PDFDocument } = PDFLib;
+
+                // Create a new blank PDF
+                const mergedPdf = await PDFDocument.create();
+
+                for (const file of pdfFiles) {
+                    statusElement.textContent = `Merging: ${file.name}...`;
+
+                    const arrayBuffer = await file.arrayBuffer();
+
+                    // Load the source PDF
+                    // ignoreEncryptionError allows reading the structure even if encrypted (sometimes)
+                    // but usually, if it's password protected, this will throw.
+                    const srcPdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+
+                    // Copy all pages from source to merged
+                    const copiedPages = await mergedPdf.copyPages(srcPdf, srcPdf.getPageIndices());
+
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                }
+
+                // Serialize the PDFDocument to bytes (a Uint8Array)
+                const pdfBytes = await mergedPdf.save();
+
+                // Trigger Download
+                downloadPdf(pdfBytes);
+
+                statusElement.textContent = "Done! Download started.";
+                convertButton.textContent = "Merge PDFs";
+                convertButton.disabled = false;
+
+            } catch (err) {
+                console.error(err);
+                statusElement.textContent = "Error: " + err.message;
+                alert("An error occurred. If a PDF is password protected, please unlock it first.\n\nError: " + err.message);
+                convertButton.disabled = false;
+            }
+        }
+
+        function downloadPdf(pdfBytes) {
+            let fileName = pdfNameInput.value.trim();
+            if (!fileName.toLowerCase().endsWith('.pdf')) {
+                fileName += '.pdf';
+            }
+
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        }
+
+    </script>
+</body>
+</html>

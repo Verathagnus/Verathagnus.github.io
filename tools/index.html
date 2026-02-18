@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Utilities</title>
+    <style>
+        :root {
+            /* Samplings from your portfolio UI */
+            --bg-deep-blue: #010d3e;
+            --text-white: #ffffff;
+            --accent-teal: #2dd4bf; /* Teal-500 */
+            --accent-yellow: #fdcc49; /* Yellow from your selected page state */
+            --muted-text: #a0aec0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-deep-blue);
+            color: var(--text-white);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+            /* Added radial gradient for depth as discussed */
+            background: radial-gradient(circle at top right, #0a192f, var(--bg-deep-blue));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif; /* Matching your BP logo style */
+            font-weight: 700;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: var(--muted-text);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.05); /* Glassmorphism base */
+            backdrop-filter: blur(12px);           /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 35px;
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: var(--text-white);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hover State */
+        .tool-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-teal);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.3));
+        }
+
+        .tool-card h2 {
+            margin: 0 0 12px 0;
+            font-size: 1.4rem;
+            color: var(--accent-yellow); /* Matching your React App's highlight color */
+        }
+
+        .tool-card p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--muted-text);
+            line-height: 1.5;
+        }
+
+        /* Decorative underline on hover */
+        .tool-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--accent-teal);
+            transition: width 0.4s ease;
+        }
+
+        .tool-card:hover::after {
+            width: 100%;
+        }
+
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--muted-text);
+        }
+
+        code {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent-teal);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--accent-teal);
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: gap 0.3s ease;
+            gap: 8px;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+            color: var(--accent-yellow);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="../index.html" class="back-link">
+        <span>←</span> Back to Portfolio
+    </a>
+
+    <header>
+        <h1>Research Utilities</h1>
+        <p class="subtitle">
+            Client-side PDF tools
+        </p>
+    </header>
+
+    <div class="tools-grid">
+        <a href="pdf-layout-merge.html" class="tool-card">
+            <div class="tool-icon">🖨️</div>
+            <h2>Handout Generator</h2>
+            <p>Layout multiple pages on a single A4 sheet (2-up or 4-up).</p>
+        </a>
+
+        <a href="merge-pdf.html" class="tool-card">
+            <div class="tool-icon">📑</div>
+            <h2>PDF Merger</h2>
+            <p>Combine separate pdfs into a single pdf.</p>
+        </a>
+
+        <a href="img2pdf.html" class="tool-card">
+            <div class="tool-icon">📸</div>
+            <h2>Image to PDF</h2>
+            <p>Convert scanned figures into PDF documents.</p>
+        </a>
+    </div>
+
+    <footer>
+        <p>Built for performance with <code>pdf-lib</code>. Open-source & ad-free.</p>
+    </footer>
+</div>
+
+</body>
+</html>
