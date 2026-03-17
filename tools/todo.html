@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL To-Do List – Research Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0d1a;
+            --bg-card: #252033;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-purple: #a78bfa;
+            --accent-blue: #60a5fa;
+            --accent-green: #34d399;
+            --accent-teal: #2dd4bf;
+            --border: rgba(167, 139, 250, 0.2);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Open Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem 1.25rem;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 800px; margin: 0 auto; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-teal);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: color 0.2s, gap 0.2s;
+        }
+        .back-link:hover { color: var(--accent-green); gap: 0.75rem; }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            margin: 0 0 1.5rem;
+            color: var(--accent-teal);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .input-group { margin-bottom: 1.5rem; }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(15, 13, 26, 0.6);
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 350px;
+            line-height: 1.8;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-teal);
+            color: #0f0d1a;
+        }
+        .btn-primary:hover {
+            background: var(--accent-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(167, 139, 250, 0.1);
+            color: var(--accent-purple);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: rgba(167, 139, 250, 0.2);
+            border-color: var(--accent-purple);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover {
+            color: var(--text);
+            border-color: var(--text-muted);
+        }
+
+        #status-msg {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-height: 1.4rem;
+            color: var(--accent-green);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        #status-msg.show { opacity: 1; }
+
+        .import-box {
+            background: rgba(167, 139, 250, 0.05);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .import-controls {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 600px) {
+            .import-controls { flex-direction: column; }
+            .button-row button { width: 100%; }
+        }
+
+        ::placeholder { color: rgba(148, 163, 184, 0.4); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Tools</a>
+        <h1>📝 URL To-Do List</h1>
+
+        <div class="card">
+            <div class="input-group">
+                <label for="listTitle">List Title</label>
+                <input type="text" id="listTitle" placeholder="Give your list a name..." value="(Your To-Do List Title)">
+            </div>
+
+            <div class="input-group">
+                <label for="listContent">Tasks & Notes</label>
+                <textarea id="listContent" placeholder="• Item 1&#10;• Item 2&#10;Write anything here. It will be saved in the URL automatically."></textarea>
+            </div>
+
+            <div class="button-row">
+                <button class="btn-primary" onclick="copyFullUrl()">
+                    <span>🔗</span>&nbsp; Copy Sharable URL
+                </button>
+                <button class="btn-secondary" onclick="copyBase64()">
+                    <span>📄</span>&nbsp; Copy Base64 String
+                </button>
+                <button class="btn-outline" onclick="clearList()">
+                    <span>🗑️</span>&nbsp; Clear All
+                </button>
+            </div>
+            <div id="status-msg"></div>
+        </div>
+
+        <div class="card import-box">
+            <label for="importBase64">Import Data</label>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Paste an existing Base64 string from 2doli.st or this tool to load it.</p>
+            <div class="import-controls">
+                <input type="text" id="importBase64" placeholder="Paste Base64 string here (e.g. eyJ0IjoiVGl0bGUiLCJkIjpbeyJ0IjoiVGFzayJ9XX0=)">
+                <button class="btn-primary" onclick="importFromBase64()">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const titleInput = document.getElementById('listTitle');
+        const contentInput = document.getElementById('listContent');
+        const importInput = document.getElementById('importBase64');
+        const statusEl = document.getElementById('status-msg');
+
+        function showStatus(msg, color = 'var(--accent-green)') {
+            statusEl.textContent = msg;
+            statusEl.style.color = color;
+            statusEl.classList.add('show');
+            setTimeout(() => statusEl.classList.remove('show'), 3000);
+        }
+
+        // Robust Base64 for Unicode
+        function utoa(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+                return String.fromCharCode('0x' + p1);
+            }));
+        }
+
+        function atou(str) {
+            return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+
+        function getData() {
+            return {
+                t: titleInput.value,
+                d: [{ t: contentInput.value }]
+            };
+        }
+
+        function updateUrl() {
+            const data = getData();
+            const json = JSON.stringify(data);
+            try {
+                const base64 = utoa(json);
+                window.location.hash = base64;
+            } catch (e) {
+                console.error("Encoding error", e);
+            }
+        }
+
+        function loadFromUrl() {
+            const hash = window.location.hash.substring(1);
+            if (!hash) return;
+            try {
+                const json = atou(hash);
+                const data = JSON.parse(json);
+                applyData(data);
+            } catch (e) {
+                console.error("Failed to parse URL data", e);
+            }
+        }
+
+        function applyData(data) {
+            if (data.t !== undefined) titleInput.value = data.t;
+            if (data.d && data.d[0] && data.d[0].t !== undefined) {
+                contentInput.value = data.d[0].t;
+            }
+        }
+
+        function copyFullUrl() {
+            updateUrl();
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showStatus('🚀 Sharable URL copied to clipboard!');
+            });
+        }
+
+        function copyBase64() {
+            const data = getData();
+            const json = JSON.stringify(data);
+            try {
+                const base64 = utoa(json);
+                navigator.clipboard.writeText(base64).then(() => {
+                    showStatus('📄 Base64 string copied!');
+                });
+            } catch (e) {
+                showStatus('Encoding error!', 'var(--accent-purple)');
+            }
+        }
+
+        function clearList() {
+            if (confirm('Are you sure you want to clear your list? This cannot be undone.')) {
+                titleInput.value = '(Your To-Do List Title)';
+                contentInput.value = '';
+                updateUrl();
+                showStatus('List cleared');
+            }
+        }
+
+        function importFromBase64() {
+            const base64 = importInput.value.trim();
+            if (!base64) return;
+            try {
+                const json = atou(base64);
+                const data = JSON.parse(json);
+                applyData(data);
+                updateUrl();
+                importInput.value = '';
+                showStatus('✅ Data imported successfully!');
+            } catch (e) {
+                showStatus('❌ Invalid Base64 data!', 'var(--accent-purple)');
+            }
+        }
+
+        // Live update as user types
+        let debounceTimer;
+        function debouncedUpdate() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(updateUrl, 300);
+        }
+
+        titleInput.addEventListener('input', debouncedUpdate);
+        contentInput.addEventListener('input', debouncedUpdate);
+
+        // Handle back/forward navigation
+        window.addEventListener('hashchange', loadFromUrl);
+
+        // Initial load
+        window.addEventListener('load', loadFromUrl);
+    </script>
+</body>
+</html>
