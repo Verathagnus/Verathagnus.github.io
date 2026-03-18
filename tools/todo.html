@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL To-Do List – Research Tools</title>
+    <title>Smart URL Editor – Research Tools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link href="quill.snow.css" rel="stylesheet">
     <style>
         :root {
+            /* Dark Theme (Default) */
             --bg: #0f0d1a;
             --bg-card: #252033;
             --text: #f1f5f9;
@@ -19,59 +20,189 @@
             --accent-green: #34d399;
             --accent-teal: #2dd4bf;
             --border: rgba(167, 139, 250, 0.2);
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --input-bg: rgba(15, 13, 26, 0.6);
+            --toolbar-bg: rgba(167, 139, 250, 0.12);
+            --toolbar-active: rgba(167, 139, 250, 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            /* Light Theme */
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --accent-purple: #7c3aed;
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-teal: #0d9488;
+            --border: rgba(124, 58, 237, 0.2);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --input-bg: #f1f5f9;
+            --toolbar-bg: #f1f5f9;
+            --toolbar-active: #e2e8f0;
         }
 
         * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
         body {
             font-family: 'Open Sans', system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 2rem 1.25rem;
+            padding: 0;
             min-height: 100vh;
-            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
         }
 
-        .container { max-width: 900px; margin: 0 auto; }
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 2rem;
+            background: var(--bg-card);
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 2rem; }
 
         .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
             color: var(--accent-teal);
             text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            transition: color 0.2s, gap 0.2s;
+            font-weight: 800;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            transition: var(--transition);
+            opacity: 0.8;
         }
-        .back-link:hover { color: var(--accent-green); gap: 0.75rem; }
+        .back-link:hover { opacity: 1; transform: translateX(-4px); }
 
-        h1 {
+        .thin-title {
             font-family: 'Playfair Display', serif;
-            font-size: 2.25rem;
-            margin: 0 0 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: var(--accent-teal);
+            letter-spacing: 0.01em;
+        }
+
+        .theme-toggle {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover { 
+            transform: scale(1.1) rotate(12deg);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 15px var(--border);
+        }
+
+        /* Main Content */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .editor-section { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 60vh;
+        }
+
+        /* Quill Theme Overrides */
+        .ql-toolbar.ql-snow {
+            border-color: var(--border) !important;
+            background: var(--toolbar-bg);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border-bottom: none !important;
+            position: sticky;
+            top: 73px; /* nav height offset */
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+        .ql-container.ql-snow {
+            border-color: var(--border) !important;
+            background: var(--input-bg);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            flex: 1;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+        .ql-editor {
+            min-height: 500px;
+            color: var(--text);
+            line-height: 1.8;
+            padding: 2.5rem;
+        }
+        
+        .ql-snow .ql-stroke { stroke: var(--text-muted) !important; transition: stroke 0.2s; }
+        .ql-snow .ql-fill { fill: var(--text-muted) !important; transition: fill 0.2s; }
+        .ql-snow .ql-picker { color: var(--text-muted) !important; transition: color 0.2s; }
+        .ql-snow.ql-toolbar button:hover .ql-stroke, 
+        .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+        .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke { stroke: var(--accent-teal) !important; }
+        .ql-snow.ql-toolbar button:hover .ql-fill, 
+        .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: var(--accent-teal) !important; }
+        .ql-editor.ql-blank::before { color: var(--text-muted) !important; opacity: 0.4; }
+
+        /* Bottom Settings */
+        .settings-section {
+            margin-top: 4rem;
+            padding-bottom: 5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
         }
 
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 2rem;
-            margin-bottom: 2rem;
             box-shadow: var(--shadow);
+            transition: var(--transition);
         }
+        .card:hover { border-color: var(--accent-purple); }
 
         .input-group { margin-bottom: 1.5rem; }
         label {
             display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
         }
 
         input[type="text"] {
@@ -79,186 +210,161 @@
             padding: 1rem;
             border: 1px solid var(--border);
             border-radius: 12px;
-            background: rgba(15, 13, 26, 0.6);
+            background: var(--input-bg);
             color: var(--text);
             font-size: 1rem;
-            font-family: inherit;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: var(--transition);
         }
-
         input[type="text"]:focus {
             outline: none;
             border-color: var(--accent-teal);
-            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
+            box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15);
         }
 
-        /* Quill Dark Mode Customization */
-        .editor-container {
-            margin-bottom: 1.5rem;
-        }
-        .ql-toolbar.ql-snow {
-            border-color: var(--border) !important;
-            background: rgba(167, 139, 250, 0.08);
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            border-bottom: none;
-            padding: 0.75rem;
-        }
-        .ql-container.ql-snow {
-            border-color: var(--border) !important;
-            background: rgba(15, 13, 26, 0.6);
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            font-family: 'Open Sans', sans-serif;
-            font-size: 1rem;
-            min-height: 450px;
-        }
-        .ql-editor {
-            min-height: 450px;
-            color: var(--text);
-            line-height: 1.8;
-        }
-        .ql-snow .ql-stroke { stroke: var(--text-muted) !important; }
-        .ql-snow .ql-fill { fill: var(--text-muted) !important; }
-        .ql-snow .ql-picker { color: var(--text-muted) !important; }
-        .ql-snow .ql-picker-options { 
-            background-color: var(--bg-card) !important; 
-            border: 1px solid var(--border) !important;
-            color: var(--text) !important;
-        }
-        .ql-snow.ql-toolbar button:hover .ql-stroke, 
-        .ql-snow.ql-toolbar button.ql-active .ql-stroke,
-        .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke,
-        .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-stroke { stroke: var(--accent-teal) !important; }
-        
-        .ql-snow.ql-toolbar button:hover .ql-fill, 
-        .ql-snow.ql-toolbar button.ql-active .ql-fill,
-        .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill,
-        .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-fill { fill: var(--accent-teal) !important; }
-        
-        .ql-editor.ql-blank::before { color: rgba(148, 163, 184, 0.4) !important; font-style: normal; }
+        .button-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
 
-        .button-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        button {
+        button.btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.8rem 1.5rem;
+            padding: 0.85rem 1.5rem;
             border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             border: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
-
-        .btn-primary { background: var(--accent-teal); color: #0f0d1a; }
-        .btn-primary:hover {
-            background: var(--accent-green);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
-        }
-
-        .btn-secondary { background: rgba(167, 139, 250, 0.1); color: var(--accent-purple); border: 1px solid var(--border); }
-        .btn-secondary:hover { background: rgba(167, 139, 250, 0.2); border-color: var(--accent-purple); }
-
+        .btn-primary { background: var(--accent-teal); color: #fff; }
+        [data-theme="dark"] .btn-primary { color: #0f0d1a; }
+        
+        .btn-primary:hover { background: var(--accent-green); transform: translateY(-2px); }
+        .btn-secondary { background: var(--toolbar-bg); color: var(--accent-purple); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--toolbar-active); }
         .btn-outline { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
         .btn-outline:hover { color: var(--text); border-color: var(--text-muted); }
 
         #status-msg {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            min-height: 1.4rem;
+            font-size: 0.85rem;
+            font-weight: 700;
             color: var(--accent-green);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: var(--transition);
         }
         #status-msg.show { opacity: 1; }
 
-        .import-box {
-            background: rgba(167, 139, 250, 0.05);
-            border: 1px dashed var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            margin-top: -1px;
         }
 
-        .import-controls { display: flex; gap: 0.75rem; }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
 
+        @media (max-width: 900px) {
+            .settings-section { grid-template-columns: 1fr; }
+        }
         @media (max-width: 600px) {
-            .import-controls { flex-direction: column; }
             .button-row button { width: 100%; }
         }
-
-        ::placeholder { color: rgba(148, 163, 184, 0.4); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="index.html" class="back-link">← Back to Tools</a>
-        <h1>✨ Smart URL Editor</h1>
-
-        <div class="card">
-            <div class="input-group">
-                <label for="listTitle">Document Title</label>
-                <input type="text" id="listTitle" placeholder="Give your document a name..." value="(Your Document Title)">
-            </div>
-
-            <div class="input-group editor-container">
-                <label>Content</label>
-                <div id="editor"></div>
-            </div>
-
-            <div class="button-row">
-                <button class="btn-primary" onclick="copyFullUrl()">
-                    <span>🔗</span>&nbsp; Copy Sharable URL
-                </button>
-                <button class="btn-secondary" onclick="exportBase64()">
-                    <span>📄</span>&nbsp; Export to Base64
-                </button>
-                <button class="btn-outline" onclick="clearAll()">
-                    <span>🗑️</span>&nbsp; Clear All
-                </button>
-            </div>
-            <div id="status-msg"></div>
+    <nav class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="back-link">← BACK</a>
+            <span class="thin-title">Smart URL Editor</span>
         </div>
+        <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button>
+    </nav>
 
-        <div class="card import-box">
-            <label for="importBase64">Import from Base64</label>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Paste a Base64 string from this tool (or 2doli.st) to restore content.</p>
-            <div class="import-controls">
-                <input type="text" id="importBase64" placeholder="Paste Base64 string here...">
-                <button class="btn-primary" onclick="importFromBase64()">Import</button>
+    <div class="main-container">
+        <main class="editor-section">
+            <div id="editor"></div>
+            <div class="editor-footer">
+                <div id="status-msg"></div>
+                <div class="stats">
+                    <span id="charCount">0 Characters</span>
+                    <span id="wordCount">0 Words</span>
+                </div>
             </div>
-        </div>
+        </main>
+
+        <section class="settings-section">
+            <div class="card">
+                <div class="input-group">
+                    <label for="listTitle">Document Title</label>
+                    <input type="text" id="listTitle" placeholder="Give your document a name..." value="(Your Document Title)">
+                </div>
+
+                <div class="button-row">
+                    <button class="btn btn-primary" onclick="copyFullUrl()">
+                        <span>🔗</span>&nbsp; Copy Sharable URL
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportBase64()">
+                        <span>📄</span>&nbsp; Export to Base64
+                    </button>
+                    <button class="btn btn-outline" onclick="clearAll()">
+                        <span>🗑️</span>&nbsp; Clear All
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <label for="importBase64">Import Content</label>
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                    <input type="text" id="importBase64" placeholder="Paste Base64 string here...">
+                    <button class="btn btn-primary" onclick="importFromBase64()">Import</button>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <!-- Quill JS -->
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
-
     <script>
         const titleInput = document.getElementById('listTitle');
         const importInput = document.getElementById('importBase64');
         const statusEl = document.getElementById('status-msg');
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
 
-        // Initialize Quill
+        // Theme Logic
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            localStorage.setItem('editor-theme', newTheme);
+        });
+
+        // Restore Theme
+        const savedTheme = localStorage.getItem('editor-theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+
+        // Quill Initialization
         const quill = new Quill('#editor', {
             theme: 'snow',
-            placeholder: 'Start typing your notes or tasks here...',
+            placeholder: 'Start typing your notes...',
             modules: {
                 toolbar: [
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    [{ 'header': [1, 2, 3, false] }],
                     ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'align': [] }],
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+                    [{ 'color': [] }, { 'background': [] }],
                     ['link', 'blockquote', 'code-block'],
                     ['clean']
                 ]
@@ -272,129 +378,102 @@
             setTimeout(() => statusEl.classList.remove('show'), 3000);
         }
 
-        // Robust Base64 for Unicode
         function utoa(str) {
-            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-                return String.fromCharCode('0x' + p1);
-            }));
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p1) => String.fromCharCode('0x' + p1)));
         }
 
         function atou(str) {
             try {
-                return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-            } catch(e) {
-                // Fallback for simple atob if decode fails
-                return atob(str);
-            }
+                return decodeURIComponent(Array.prototype.map.call(atob(str), c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            } catch(e) { return atob(str); }
         }
 
         function getData() {
-            return {
-                t: titleInput.value,
-                d: [{ t: quill.getSemanticHTML() }]
-            };
+            return { t: titleInput.value, d: [{ t: quill.getSemanticHTML() }] };
         }
 
         function updateUrl() {
-            const data = getData();
-            const json = JSON.stringify(data);
             try {
-                const base64 = utoa(json);
-                // Update hash without triggering hashchange listener
+                const base64 = utoa(JSON.stringify(getData()));
                 window.history.replaceState(null, null, '#' + base64);
-            } catch (e) {
-                console.error("Encoding error", e);
-            }
+            } catch (e) { console.error(e); }
         }
 
         function loadFromUrl() {
             const hash = window.location.hash.substring(1);
             if (!hash) return;
             try {
-                const json = atou(hash);
-                const data = JSON.parse(json);
-                applyData(data);
-            } catch (e) {
-                console.error("Failed to parse URL data", e);
-            }
-        }
-
-        function applyData(data) {
-            if (data.t !== undefined) titleInput.value = data.t;
-            if (data.d && data.d[0] && data.d[0].t !== undefined) {
-                // Quill can handle HTML content safely
-                quill.setContents([]); // Clear first
-                quill.clipboard.dangerouslyPasteHTML(data.d[0].t);
-            }
+                const data = JSON.parse(atou(hash));
+                if (data.t !== undefined) titleInput.value = data.t;
+                if (data.d && data.d[0]) {
+                    quill.setContents([]);
+                    quill.clipboard.dangerouslyPasteHTML(data.d[0].t);
+                }
+            } catch (e) { console.error(e); }
         }
 
         function copyFullUrl() {
             updateUrl();
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                showStatus('🚀 Sharable URL copied to clipboard!');
-            });
+            navigator.clipboard.writeText(window.location.href).then(() => showStatus('🚀 URL copied!'));
         }
 
         function exportBase64() {
-            const data = getData();
-            const json = JSON.stringify(data);
-            try {
-                const base64 = utoa(json);
-                navigator.clipboard.writeText(base64).then(() => {
-                    showStatus('📄 Base64 string exported to clipboard!');
-                });
-            } catch (e) {
-                showStatus('Encoding error!', 'var(--accent-purple)');
-            }
+            navigator.clipboard.writeText(utoa(JSON.stringify(getData()))).then(() => showStatus('📄 Base64 exported!'));
         }
 
         function clearAll() {
-            if (confirm('Are you sure you want to clear the entire document?')) {
-                titleInput.value = '(Your Document Title)';
+            if (confirm('Clear everything?')) {
+                titleInput.value = '(Untitled Document)';
                 quill.setContents([]);
                 updateUrl();
-                showStatus('Document cleared');
             }
         }
 
         function importFromBase64() {
-            const base64 = importInput.value.trim();
-            if (!base64) return;
+            const b64 = importInput.value.trim();
+            if (!b64) return;
             try {
-                const json = atou(base64);
-                const data = JSON.parse(json);
-                applyData(data);
+                const data = JSON.parse(atou(b64));
+                if (data.t !== undefined) titleInput.value = data.t;
+                if (data.d && data.d[0]) {
+                    quill.setContents([]);
+                    quill.clipboard.dangerouslyPasteHTML(data.d[0].t);
+                }
                 updateUrl();
                 importInput.value = '';
-                showStatus('✅ Data imported successfully!');
-            } catch (e) {
-                showStatus('❌ Invalid Base64 data!', 'var(--accent-purple)');
-            }
+                showStatus('✅ Imported!');
+            } catch (e) { showStatus('❌ Error!', 'var(--accent-purple)'); }
         }
 
-        // Event listeners
-        let debounceTimer;
-        function debouncedUpdate() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(updateUrl, 500);
+        const charCountEl = document.getElementById('charCount');
+        const wordCountEl = document.getElementById('wordCount');
+
+        function updateStats() {
+            const text = quill.getText().trim();
+            const charCount = text.length;
+            const wordCount = text.length > 0 ? text.split(/\s+/).length : 0;
+            charCountEl.textContent = `${charCount} Characters`;
+            wordCountEl.textContent = `${wordCount} Words`;
         }
 
-        titleInput.addEventListener('input', debouncedUpdate);
-        quill.on('text-change', debouncedUpdate);
+        let db;
+        const deb = () => { 
+            clearTimeout(db); 
+            db = setTimeout(() => {
+                updateUrl();
+                updateStats();
+            }, 500); 
+        };
+        titleInput.addEventListener('input', deb);
+        quill.on('text-change', deb);
 
-        // Initial load
-        window.addEventListener('load', loadFromUrl);
-
-        // Handle hash changes (e.g. back/forward button)
-        window.addEventListener('hashchange', () => {
-            const currentHash = window.location.hash.substring(1);
-            const data = getData();
-            if (utoa(JSON.stringify(data)) !== currentHash) {
-                loadFromUrl();
-            }
+        window.addEventListener('load', () => {
+            loadFromUrl();
+            updateStats();
         });
+        window.addEventListener('hashchange', () => {
+            if (utoa(JSON.stringify(getData())) !== window.location.hash.substring(1)) loadFromUrl();
+            });
     </script>
 </body>
 </html>
