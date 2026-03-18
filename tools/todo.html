@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="quill.snow.css" rel="stylesheet">
     <style>
         :root {
             --bg: #0f0d1a;
@@ -32,7 +33,7 @@
             line-height: 1.6;
         }
 
-        .container { max-width: 800px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; }
 
         .back-link {
             display: inline-flex;
@@ -73,7 +74,7 @@
             letter-spacing: 0.05em;
         }
 
-        input[type="text"], textarea {
+        input[type="text"] {
             width: 100%;
             padding: 1rem;
             border: 1px solid var(--border);
@@ -85,17 +86,57 @@
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        input[type="text"]:focus, textarea:focus {
+        input[type="text"]:focus {
             outline: none;
             border-color: var(--accent-teal);
             box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 350px;
+        /* Quill Dark Mode Customization */
+        .editor-container {
+            margin-bottom: 1.5rem;
+        }
+        .ql-toolbar.ql-snow {
+            border-color: var(--border) !important;
+            background: rgba(167, 139, 250, 0.08);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border-bottom: none;
+            padding: 0.75rem;
+        }
+        .ql-container.ql-snow {
+            border-color: var(--border) !important;
+            background: rgba(15, 13, 26, 0.6);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            min-height: 450px;
+        }
+        .ql-editor {
+            min-height: 450px;
+            color: var(--text);
             line-height: 1.8;
         }
+        .ql-snow .ql-stroke { stroke: var(--text-muted) !important; }
+        .ql-snow .ql-fill { fill: var(--text-muted) !important; }
+        .ql-snow .ql-picker { color: var(--text-muted) !important; }
+        .ql-snow .ql-picker-options { 
+            background-color: var(--bg-card) !important; 
+            border: 1px solid var(--border) !important;
+            color: var(--text) !important;
+        }
+        .ql-snow.ql-toolbar button:hover .ql-stroke, 
+        .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+        .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke,
+        .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-stroke { stroke: var(--accent-teal) !important; }
+        
+        .ql-snow.ql-toolbar button:hover .ql-fill, 
+        .ql-snow.ql-toolbar button.ql-active .ql-fill,
+        .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill,
+        .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-fill { fill: var(--accent-teal) !important; }
+        
+        .ql-editor.ql-blank::before { color: rgba(148, 163, 184, 0.4) !important; font-style: normal; }
 
         .button-row {
             display: flex;
@@ -117,35 +158,18 @@
             font-size: 0.95rem;
         }
 
-        .btn-primary {
-            background: var(--accent-teal);
-            color: #0f0d1a;
-        }
+        .btn-primary { background: var(--accent-teal); color: #0f0d1a; }
         .btn-primary:hover {
             background: var(--accent-green);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
         }
 
-        .btn-secondary {
-            background: rgba(167, 139, 250, 0.1);
-            color: var(--accent-purple);
-            border: 1px solid var(--border);
-        }
-        .btn-secondary:hover {
-            background: rgba(167, 139, 250, 0.2);
-            border-color: var(--accent-purple);
-        }
+        .btn-secondary { background: rgba(167, 139, 250, 0.1); color: var(--accent-purple); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: rgba(167, 139, 250, 0.2); border-color: var(--accent-purple); }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-        }
-        .btn-outline:hover {
-            color: var(--text);
-            border-color: var(--text-muted);
-        }
+        .btn-outline { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-outline:hover { color: var(--text); border-color: var(--text-muted); }
 
         #status-msg {
             margin-top: 1rem;
@@ -165,10 +189,7 @@
             padding: 1.5rem;
         }
 
-        .import-controls {
-            display: flex;
-            gap: 0.75rem;
-        }
+        .import-controls { display: flex; gap: 0.75rem; }
 
         @media (max-width: 600px) {
             .import-controls { flex-direction: column; }
@@ -181,27 +202,27 @@
 <body>
     <div class="container">
         <a href="index.html" class="back-link">← Back to Tools</a>
-        <h1>📝 URL To-Do List</h1>
+        <h1>✨ Smart URL Editor</h1>
 
         <div class="card">
             <div class="input-group">
-                <label for="listTitle">List Title</label>
-                <input type="text" id="listTitle" placeholder="Give your list a name..." value="(Your To-Do List Title)">
+                <label for="listTitle">Document Title</label>
+                <input type="text" id="listTitle" placeholder="Give your document a name..." value="(Your Document Title)">
             </div>
 
-            <div class="input-group">
-                <label for="listContent">Tasks & Notes</label>
-                <textarea id="listContent" placeholder="• Item 1&#10;• Item 2&#10;Write anything here. It will be saved in the URL automatically."></textarea>
+            <div class="input-group editor-container">
+                <label>Content</label>
+                <div id="editor"></div>
             </div>
 
             <div class="button-row">
                 <button class="btn-primary" onclick="copyFullUrl()">
                     <span>🔗</span>&nbsp; Copy Sharable URL
                 </button>
-                <button class="btn-secondary" onclick="copyBase64()">
-                    <span>📄</span>&nbsp; Copy Base64 String
+                <button class="btn-secondary" onclick="exportBase64()">
+                    <span>📄</span>&nbsp; Export to Base64
                 </button>
-                <button class="btn-outline" onclick="clearList()">
+                <button class="btn-outline" onclick="clearAll()">
                     <span>🗑️</span>&nbsp; Clear All
                 </button>
             </div>
@@ -209,20 +230,40 @@
         </div>
 
         <div class="card import-box">
-            <label for="importBase64">Import Data</label>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Paste an existing Base64 string from 2doli.st or this tool to load it.</p>
+            <label for="importBase64">Import from Base64</label>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Paste a Base64 string from this tool (or 2doli.st) to restore content.</p>
             <div class="import-controls">
-                <input type="text" id="importBase64" placeholder="Paste Base64 string here (e.g. eyJ0IjoiVGl0bGUiLCJkIjpbeyJ0IjoiVGFzayJ9XX0=)">
+                <input type="text" id="importBase64" placeholder="Paste Base64 string here...">
                 <button class="btn-primary" onclick="importFromBase64()">Import</button>
             </div>
         </div>
     </div>
 
+    <!-- Quill JS -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
     <script>
         const titleInput = document.getElementById('listTitle');
-        const contentInput = document.getElementById('listContent');
         const importInput = document.getElementById('importBase64');
         const statusEl = document.getElementById('status-msg');
+
+        // Initialize Quill
+        const quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'Start typing your notes or tasks here...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+                    ['link', 'blockquote', 'code-block'],
+                    ['clean']
+                ]
+            }
+        });
 
         function showStatus(msg, color = 'var(--accent-green)') {
             statusEl.textContent = msg;
@@ -239,15 +280,20 @@
         }
 
         function atou(str) {
-            return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
+            try {
+                return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+            } catch(e) {
+                // Fallback for simple atob if decode fails
+                return atob(str);
+            }
         }
 
         function getData() {
             return {
                 t: titleInput.value,
-                d: [{ t: contentInput.value }]
+                d: [{ t: quill.getSemanticHTML() }]
             };
         }
 
@@ -256,7 +302,8 @@
             const json = JSON.stringify(data);
             try {
                 const base64 = utoa(json);
-                window.location.hash = base64;
+                // Update hash without triggering hashchange listener
+                window.history.replaceState(null, null, '#' + base64);
             } catch (e) {
                 console.error("Encoding error", e);
             }
@@ -277,7 +324,9 @@
         function applyData(data) {
             if (data.t !== undefined) titleInput.value = data.t;
             if (data.d && data.d[0] && data.d[0].t !== undefined) {
-                contentInput.value = data.d[0].t;
+                // Quill can handle HTML content safely
+                quill.setContents([]); // Clear first
+                quill.clipboard.dangerouslyPasteHTML(data.d[0].t);
             }
         }
 
@@ -288,25 +337,25 @@
             });
         }
 
-        function copyBase64() {
+        function exportBase64() {
             const data = getData();
             const json = JSON.stringify(data);
             try {
                 const base64 = utoa(json);
                 navigator.clipboard.writeText(base64).then(() => {
-                    showStatus('📄 Base64 string copied!');
+                    showStatus('📄 Base64 string exported to clipboard!');
                 });
             } catch (e) {
                 showStatus('Encoding error!', 'var(--accent-purple)');
             }
         }
 
-        function clearList() {
-            if (confirm('Are you sure you want to clear your list? This cannot be undone.')) {
-                titleInput.value = '(Your To-Do List Title)';
-                contentInput.value = '';
+        function clearAll() {
+            if (confirm('Are you sure you want to clear the entire document?')) {
+                titleInput.value = '(Your Document Title)';
+                quill.setContents([]);
                 updateUrl();
-                showStatus('List cleared');
+                showStatus('Document cleared');
             }
         }
 
@@ -325,21 +374,27 @@
             }
         }
 
-        // Live update as user types
+        // Event listeners
         let debounceTimer;
         function debouncedUpdate() {
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(updateUrl, 300);
+            debounceTimer = setTimeout(updateUrl, 500);
         }
 
         titleInput.addEventListener('input', debouncedUpdate);
-        contentInput.addEventListener('input', debouncedUpdate);
-
-        // Handle back/forward navigation
-        window.addEventListener('hashchange', loadFromUrl);
+        quill.on('text-change', debouncedUpdate);
 
         // Initial load
         window.addEventListener('load', loadFromUrl);
+
+        // Handle hash changes (e.g. back/forward button)
+        window.addEventListener('hashchange', () => {
+            const currentHash = window.location.hash.substring(1);
+            const data = getData();
+            if (utoa(JSON.stringify(data)) !== currentHash) {
+                loadFromUrl();
+            }
+        });
     </script>
 </body>
 </html>
