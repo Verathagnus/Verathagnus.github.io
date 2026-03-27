@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart URL Editor – Research Tools</title>
+    <title>Smart Editor – Ultimate Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link href="quill.snow.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    
     <style>
         :root {
             /* Dark Theme (Default) */
@@ -129,171 +133,234 @@
             padding: 2rem 1.5rem;
         }
 
-        .editor-section { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
+        /* Master Mode Selector */
+        .master-mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            background: var(--bg-card);
+            padding: 0.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            width: fit-content;
+        }
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .mode-btn.active {
+            background: var(--accent-teal);
+            color: #fff;
+        }
+        [data-theme="dark"] .mode-btn.active { color: #0f0d1a; }
+
+        /* Editor Containers */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
             min-height: 60vh;
         }
 
-        /* Quill Theme Overrides */
+        /* Quill UI Overrides */
+        #quill-wrapper { display: flex; flex-direction: column; flex: 1; }
         .ql-toolbar.ql-snow {
             border-color: var(--border) !important;
             background: var(--toolbar-bg);
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
             border-bottom: none !important;
             position: sticky;
-            top: 73px; /* nav height offset */
+            top: 73px;
             z-index: 100;
-            backdrop-filter: blur(8px);
         }
         .ql-container.ql-snow {
             border-color: var(--border) !important;
             background: var(--input-bg);
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
             flex: 1;
             font-family: 'Open Sans', sans-serif;
             font-size: 1.1rem;
-            transition: var(--transition);
         }
-        .ql-editor {
-            min-height: 500px;
-            color: var(--text);
-            line-height: 1.8;
-            padding: 2.5rem;
-        }
-        
+        .ql-editor { min-height: 500px; color: var(--text); padding: 2.5rem; }
         .ql-snow .ql-stroke { stroke: var(--text-muted) !important; transition: stroke 0.2s; }
         .ql-snow .ql-fill { fill: var(--text-muted) !important; transition: fill 0.2s; }
         .ql-snow .ql-picker { color: var(--text-muted) !important; transition: color 0.2s; }
-        .ql-snow.ql-toolbar button:hover .ql-stroke, 
-        .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+        .ql-snow.ql-toolbar button:hover .ql-stroke, .ql-snow.ql-toolbar button.ql-active .ql-stroke,
         .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke { stroke: var(--accent-teal) !important; }
-        .ql-snow.ql-toolbar button:hover .ql-fill, 
-        .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: var(--accent-teal) !important; }
-        .ql-editor.ql-blank::before { color: var(--text-muted) !important; opacity: 0.4; }
+        .ql-snow.ql-toolbar button:hover .ql-fill, .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: var(--accent-teal) !important; }
 
-        /* Bottom Settings */
+        /* Markdown UI */
+        #md-wrapper { display: none; flex-direction: column; flex: 1; }
+        .editor-tabs {
+            display: flex;
+            background: var(--toolbar-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 0 1rem;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+        .tab-btn:hover { color: var(--text); }
+        .tab-btn.active { color: var(--accent-teal); border-bottom-color: var(--accent-teal); }
+
+        #md-editor {
+            flex: 1;
+            width: 100%;
+            min-height: 500px;
+            padding: 2.5rem;
+            background: var(--input-bg);
+            color: var(--text);
+            border: none;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+        }
+
+        #md-preview {
+            display: none;
+            flex: 1;
+            width: 100%;
+            min-height: 500px;
+            padding: 2.5rem;
+            background: var(--input-bg);
+            color: var(--text);
+            overflow-y: auto;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        /* Markdown Preview Styling */
+        #md-preview h1, #md-preview h2, #md-preview h3 { color: var(--accent-teal); margin-top: 1.5em; margin-bottom: 0.5em; }
+        #md-preview a { color: var(--accent-blue); text-decoration: none; }
+        #md-preview a:hover { text-decoration: underline; }
+        #md-preview blockquote {
+            border-left: 4px solid var(--accent-purple); margin: 1.5em 0; padding: 0.5em 1em;
+            background: var(--toolbar-bg); color: var(--text-muted); border-radius: 0 8px 8px 0;
+        }
+        
+        /* Code Block Styling (Integrating with Highlight.js) */
+        #md-preview pre { 
+            padding: 0; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            border: 1px solid var(--border);
+            margin: 1.5em 0;
+        }
+        #md-preview pre code.hljs {
+            padding: 1.25rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        /* Inline code */
+        #md-preview code:not(.hljs) { 
+            background: var(--bg-card); 
+            padding: 0.2em 0.4em; 
+            border-radius: 4px; 
+            font-family: 'Fira Code', monospace; 
+            color: var(--accent-purple);
+            border: 1px solid var(--border);
+        }
+
+        #md-preview table { width: 100%; border-collapse: collapse; margin: 1.5em 0; background: var(--bg-card); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+        #md-preview th, #md-preview td { padding: 0.75rem 1rem; border: 1px solid var(--border); text-align: left; }
+        #md-preview th { background: var(--toolbar-active); font-weight: 700; color: var(--accent-teal); }
+
+        /* Shared Footer */
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--toolbar-bg);
+            border-top: 1px solid var(--border);
+        }
+        .stats { display: flex; gap: 1.5rem; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        #status-msg { font-size: 0.85rem; font-weight: 700; color: var(--accent-green); opacity: 0; transition: var(--transition); }
+        #status-msg.show { opacity: 1; }
+
+        /* Settings Section */
         .settings-section {
-            margin-top: 4rem;
+            margin-top: 2rem;
             padding-bottom: 5rem;
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
         }
 
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; box-shadow: var(--shadow); transition: var(--transition); }
         .card:hover { border-color: var(--accent-purple); }
-
         .input-group { margin-bottom: 1.5rem; }
-        label {
-            display: block;
-            font-weight: 800;
-            margin-bottom: 0.75rem;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
+        label { display: block; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+        
+        input[type="text"], select.styled-select {
+            width: 100%; padding: 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--input-bg); color: var(--text); font-size: 1rem; transition: var(--transition);
         }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 1rem;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--input-bg);
-            color: var(--text);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--accent-teal);
-            box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15);
-        }
+        input[type="text"]:focus, select.styled-select:focus { outline: none; border-color: var(--accent-teal); box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15); }
 
         .button-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
-
-        button.btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.85rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            font-size: 0.9rem;
-        }
+        button.btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.85rem 1.5rem; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: none; font-size: 0.9rem; }
         .btn-primary { background: var(--accent-teal); color: #fff; }
         [data-theme="dark"] .btn-primary { color: #0f0d1a; }
-        
         .btn-primary:hover { background: var(--accent-green); transform: translateY(-2px); }
         .btn-secondary { background: var(--toolbar-bg); color: var(--accent-purple); border: 1px solid var(--border); }
         .btn-secondary:hover { background: var(--toolbar-active); }
         .btn-outline { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
         .btn-outline:hover { color: var(--text); border-color: var(--text-muted); }
 
-        #status-msg {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent-green);
-            opacity: 0;
-            transition: var(--transition);
-        }
-        #status-msg.show { opacity: 1; }
-
-        .editor-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-top: none;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            margin-top: -1px;
-        }
-
-        .stats {
-            display: flex;
-            gap: 1.5rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        @media (max-width: 900px) {
-            .settings-section { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 600px) {
-            .button-row button { width: 100%; }
-        }
+        @media (max-width: 600px) { .button-row button { width: 100%; } }
     </style>
 </head>
 <body>
     <nav class="top-nav">
         <div class="nav-left">
             <a href="index.html" class="back-link">← BACK</a>
-            <span class="thin-title">Smart URL Editor</span>
+            <span class="thin-title">Smart Editor</span>
         </div>
         <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button>
     </nav>
 
     <div class="main-container">
-        <main class="editor-section">
-            <div id="editor"></div>
+        
+        <div class="master-mode-selector">
+            <button class="mode-btn active" id="mode-quill-btn">Rich Text (Quill)</button>
+            <button class="mode-btn" id="mode-md-btn">Markdown</button>
+        </div>
+
+        <div class="editor-container">
+            <div id="quill-wrapper">
+                <div id="quill-editor"></div>
+            </div>
+
+            <div id="md-wrapper">
+                <div class="editor-tabs">
+                    <button class="tab-btn active" id="btn-md-edit">Write</button>
+                    <button class="tab-btn" id="btn-md-preview">Preview</button>
+                </div>
+                <textarea id="md-editor" placeholder="Type or paste your raw Markdown here..."></textarea>
+                <div id="md-preview"></div>
+            </div>
+            
             <div class="editor-footer">
                 <div id="status-msg"></div>
                 <div class="stats">
@@ -301,65 +368,74 @@
                     <span id="wordCount">0 Words</span>
                 </div>
             </div>
-        </main>
+        </div>
 
         <section class="settings-section">
             <div class="card">
                 <div class="input-group">
                     <label for="listTitle">Document Title</label>
-                    <input type="text" id="listTitle" placeholder="Give your document a name..." value="(Your Document Title)">
+                    <input type="text" id="listTitle" placeholder="Give your document a name..." value="(Untitled Document)">
                 </div>
-
                 <div class="button-row">
-                    <button class="btn btn-primary" onclick="copyFullUrl()">
-                        <span>🔗</span>&nbsp; Copy Sharable URL
-                    </button>
-                    <button class="btn btn-secondary" onclick="exportBase64()">
-                        <span>📄</span>&nbsp; Export to Base64
-                    </button>
-                    <button class="btn btn-outline" onclick="clearAll()">
-                        <span>🗑️</span>&nbsp; Clear All
-                    </button>
+                    <button class="btn btn-primary" onclick="copyFullUrl()"><span>🔗</span>&nbsp; Copy URL</button>
+                    <button class="btn btn-secondary" onclick="exportBase64()"><span>📄</span>&nbsp; Export Base64</button>
+                    <button class="btn btn-outline" onclick="clearAll()"><span>🗑️</span>&nbsp; Clear All</button>
                 </div>
             </div>
 
             <div class="card">
-                <label for="importBase64">Import Content</label>
-                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                <label for="importBase64">Restore Content from Base64</label>
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-direction: column;">
                     <input type="text" id="importBase64" placeholder="Paste Base64 string here...">
-                    <button class="btn btn-primary" onclick="importFromBase64()">Import</button>
+                    
+                    <select id="importTarget" class="styled-select" style="margin-top: 0.5rem;">
+                        <option value="auto">Auto-detect from Backup</option>
+                        <option value="quill">Force into Rich Text</option>
+                        <option value="md">Force into Markdown</option>
+                    </select>
+
+                    <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick="importFromBase64()">Import Backup</button>
                 </div>
             </div>
         </section>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
     <script>
+        // DOM Elements
         const titleInput = document.getElementById('listTitle');
         const importInput = document.getElementById('importBase64');
+        const importTarget = document.getElementById('importTarget');
         const statusEl = document.getElementById('status-msg');
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
 
-        // Theme Logic
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
-            localStorage.setItem('editor-theme', newTheme);
-        });
+        const quillWrapper = document.getElementById('quill-wrapper');
+        const mdWrapper = document.getElementById('md-wrapper');
+        const modeQuillBtn = document.getElementById('mode-quill-btn');
+        const modeMdBtn = document.getElementById('mode-md-btn');
 
-        // Restore Theme
-        const savedTheme = localStorage.getItem('editor-theme') || 'dark';
-        html.setAttribute('data-theme', savedTheme);
-        themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+        const mdEditor = document.getElementById('md-editor');
+        const mdPreview = document.getElementById('md-preview');
+        const btnMdEdit = document.getElementById('btn-md-edit');
+        const btnMdPreview = document.getElementById('btn-md-preview');
 
-        // Quill Initialization
-        const quill = new Quill('#editor', {
+        const charCountEl = document.getElementById('charCount');
+        const wordCountEl = document.getElementById('wordCount');
+
+        let currentGlobalMode = 'quill'; // 'quill' or 'md'
+
+        // Init Libraries
+        marked.use({ gfm: true, breaks: true });
+        
+        const quill = new Quill('#quill-editor', {
             theme: 'snow',
-            placeholder: 'Start typing your notes...',
+            placeholder: 'Start typing rich text here...',
             modules: {
+                table: true,
                 toolbar: [
                     [{ 'header': [1, 2, 3, false] }],
                     ['bold', 'italic', 'underline', 'strike'],
@@ -371,32 +447,83 @@
             }
         });
 
+        // Theme Logic
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            localStorage.setItem('editor-theme', newTheme);
+        });
+        const savedTheme = localStorage.getItem('editor-theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+
+        // Master Mode Switching
+        function setGlobalMode(mode) {
+            currentGlobalMode = mode;
+            if (mode === 'quill') {
+                modeQuillBtn.classList.add('active');
+                modeMdBtn.classList.remove('active');
+                quillWrapper.style.display = 'flex';
+                mdWrapper.style.display = 'none';
+            } else {
+                modeMdBtn.classList.add('active');
+                modeQuillBtn.classList.remove('active');
+                mdWrapper.style.display = 'flex';
+                quillWrapper.style.display = 'none';
+            }
+            updateStats();
+            updateUrl();
+        }
+        modeQuillBtn.addEventListener('click', () => setGlobalMode('quill'));
+        modeMdBtn.addEventListener('click', () => setGlobalMode('md'));
+
+        // Markdown Tab Logic & Highlight.js Integration
+        btnMdEdit.addEventListener('click', () => {
+            btnMdEdit.classList.add('active');
+            btnMdPreview.classList.remove('active');
+            mdEditor.style.display = 'block';
+            mdPreview.style.display = 'none';
+        });
+        
+        btnMdPreview.addEventListener('click', () => {
+            btnMdPreview.classList.add('active');
+            btnMdEdit.classList.remove('active');
+            mdEditor.style.display = 'none';
+            mdPreview.style.display = 'block';
+            
+            // Parse Markdown
+            mdPreview.innerHTML = marked.parse(mdEditor.value || '*No content.*');
+            
+            // Apply Syntax Highlighting to newly rendered code blocks
+            mdPreview.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+
+        // Utilities
         function showStatus(msg, color = 'var(--accent-green)') {
-            statusEl.textContent = msg;
-            statusEl.style.color = color;
-            statusEl.classList.add('show');
-            setTimeout(() => statusEl.classList.remove('show'), 3000);
+            statusEl.textContent = msg; statusEl.style.color = color;
+            statusEl.classList.add('show'); setTimeout(() => statusEl.classList.remove('show'), 3000);
         }
+        function utoa(str) { return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p1) => String.fromCharCode('0x' + p1))); }
+        function atou(str) { try { return decodeURIComponent(Array.prototype.map.call(atob(str), c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')); } catch(e) { return atob(str); } }
 
-        function utoa(str) {
-            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p1) => String.fromCharCode('0x' + p1)));
-        }
-
-        function atou(str) {
-            try {
-                return decodeURIComponent(Array.prototype.map.call(atob(str), c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-            } catch(e) { return atob(str); }
-        }
-
+        // Data Management
         function getData() {
-            return { t: titleInput.value, d: [{ t: quill.getSemanticHTML() }] };
+            const data = { t: titleInput.value, mod: currentGlobalMode };
+            if (currentGlobalMode === 'quill') {
+                data.q = quill.getSemanticHTML();
+            } else {
+                data.m = mdEditor.value;
+            }
+            return data;
         }
 
         function updateUrl() {
-            try {
-                const base64 = utoa(JSON.stringify(getData()));
-                window.history.replaceState(null, null, '#' + base64);
-            } catch (e) { console.error(e); }
+            try { window.history.replaceState(null, null, '#' + utoa(JSON.stringify(getData()))); } 
+            catch (e) { console.error(e); }
         }
 
         function loadFromUrl() {
@@ -405,27 +532,34 @@
             try {
                 const data = JSON.parse(atou(hash));
                 if (data.t !== undefined) titleInput.value = data.t;
-                if (data.d && data.d[0]) {
+                
+                if (data.mod === 'md' || data.m !== undefined) {
+                    setGlobalMode('md');
+                    mdEditor.value = data.m || '';
+                    if (btnMdPreview.classList.contains('active')) {
+                        mdPreview.innerHTML = marked.parse(mdEditor.value);
+                        mdPreview.querySelectorAll('pre code').forEach((block) => { hljs.highlightElement(block); });
+                    }
+                } else {
+                    setGlobalMode('quill');
+                    const htmlContent = data.q || (data.d && data.d[0] ? data.d[0].t : '');
                     quill.setContents([]);
-                    quill.clipboard.dangerouslyPasteHTML(data.d[0].t);
+                    quill.clipboard.dangerouslyPasteHTML(htmlContent);
                 }
             } catch (e) { console.error(e); }
         }
 
-        function copyFullUrl() {
-            updateUrl();
-            navigator.clipboard.writeText(window.location.href).then(() => showStatus('🚀 URL copied!'));
-        }
-
-        function exportBase64() {
-            navigator.clipboard.writeText(utoa(JSON.stringify(getData()))).then(() => showStatus('📄 Base64 exported!'));
-        }
-
+        // Actions
+        function copyFullUrl() { updateUrl(); navigator.clipboard.writeText(window.location.href).then(() => showStatus('🚀 URL copied!')); }
+        function exportBase64() { navigator.clipboard.writeText(utoa(JSON.stringify(getData()))).then(() => showStatus('📄 Base64 exported!')); }
+        
         function clearAll() {
             if (confirm('Clear everything?')) {
                 titleInput.value = '(Untitled Document)';
                 quill.setContents([]);
-                updateUrl();
+                mdEditor.value = '';
+                mdPreview.innerHTML = '';
+                updateUrl(); updateStats();
             }
         }
 
@@ -434,46 +568,63 @@
             if (!b64) return;
             try {
                 const data = JSON.parse(atou(b64));
+                const target = importTarget.value;
+                
                 if (data.t !== undefined) titleInput.value = data.t;
-                if (data.d && data.d[0]) {
+
+                const textM = data.m || '';
+                const textQ = data.q || (data.d && data.d[0] ? data.d[0].t : '');
+                
+                if (target === 'quill' || (target === 'auto' && textQ && !textM)) {
+                    setGlobalMode('quill');
                     quill.setContents([]);
-                    quill.clipboard.dangerouslyPasteHTML(data.d[0].t);
+                    quill.clipboard.dangerouslyPasteHTML(textQ || textM);
+                } else if (target === 'md' || (target === 'auto' && textM && !textQ)) {
+                    setGlobalMode('md');
+                    mdEditor.value = textM || textQ;
+                    if (btnMdPreview.classList.contains('active')) {
+                        mdPreview.innerHTML = marked.parse(mdEditor.value);
+                        mdPreview.querySelectorAll('pre code').forEach((block) => { hljs.highlightElement(block); });
+                    }
+                } else {
+                    if (data.mod === 'md') {
+                        setGlobalMode('md');
+                        mdEditor.value = textM;
+                    } else {
+                        setGlobalMode('quill');
+                        quill.setContents([]);
+                        quill.clipboard.dangerouslyPasteHTML(textQ);
+                    }
                 }
-                updateUrl();
+
                 importInput.value = '';
                 showStatus('✅ Imported!');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } catch (e) { showStatus('❌ Error!', 'var(--accent-purple)'); }
         }
 
-        const charCountEl = document.getElementById('charCount');
-        const wordCountEl = document.getElementById('wordCount');
-
+        // Stats
         function updateStats() {
-            const text = quill.getText().trim();
+            const text = currentGlobalMode === 'quill' ? quill.getText().trim() : mdEditor.value.trim();
             const charCount = text.length;
             const wordCount = text.length > 0 ? text.split(/\s+/).length : 0;
             charCountEl.textContent = `${charCount} Characters`;
             wordCountEl.textContent = `${wordCount} Words`;
         }
 
+        // Listeners for auto-save
         let db;
-        const deb = () => { 
-            clearTimeout(db); 
-            db = setTimeout(() => {
-                updateUrl();
-                updateStats();
-            }, 500); 
-        };
+        const deb = () => { clearTimeout(db); db = setTimeout(() => { updateUrl(); updateStats(); }, 500); };
+        
         titleInput.addEventListener('input', deb);
         quill.on('text-change', deb);
+        mdEditor.addEventListener('input', deb);
 
-        window.addEventListener('load', () => {
-            loadFromUrl();
-            updateStats();
-        });
+        window.addEventListener('load', () => { loadFromUrl(); updateStats(); });
         window.addEventListener('hashchange', () => {
             if (utoa(JSON.stringify(getData())) !== window.location.hash.substring(1)) loadFromUrl();
-            });
+        });
     </script>
 </body>
 </html>
+
